@@ -1,0 +1,30 @@
+<resources>
+    <!-- system -->
+    <string name="defaultOwnerName">TABLET</string>
+
+    <!-- menu -->
+    <string name="themeMode">Day/Night</string>
+    <string name="fieldbook_mainMenuDBOptions">Manage Data</string>
+
+    <!-- home_page -->
+    <string name="app_name">Sage Field Book</string>
+    <string name="db_action_settings">Database Settings</string>
+    <string name="welcomeMsg">Press to Start</string>
+    <string name="app_version">Version 2.0 (Beta)</string>
+    <string name="title_activity_sulphur_main">SulphurMainActivity</string>
+
+    <!-- GPS Status -->
+    <string name="gpsStatus">Gps Status</string>
+    <string name="latitude">Lat</string>
+    <string name="longitude">Long</string>
+    <string name="elevation">Elevation</string>
+    <string name="speed">Speed</string>
+    <string name="heading">Heading</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="notavailable">Not Available</string>
+    <string name="title_activity_survey_main">SurveyMainActivity</string>
+
+    <string name="stationelementmenu_notesText">Notes</string>
+    <string name="stationelementmenu_editText">Edit</string>
+    <string name="stationelementmenu_deleteText">Delete</string>
+</resources>

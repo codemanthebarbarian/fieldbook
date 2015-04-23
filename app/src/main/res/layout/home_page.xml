@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/HomePageFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+        <TextView
+        android:id="@+id/homePage_welcomeMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:text="@string/welcomeMsg"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="30sp" />
+    
+        <TextView
+        android:id="@+id/sulphurApp_welcomeMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/homePage_welcomeMsg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:clickable="true"
+        android:drawableTop="@drawable/sulphur"
+        android:longClickable="true"
+        android:text="Sulphur"
+        android:textSize="25sp" />
+        
+    	<TextView
+        android:id="@+id/vegApp_welcomeMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/sulphurApp_welcomeMsg"
+        android:clickable="true"
+        android:drawableTop="@drawable/leaf"
+        android:layout_marginBottom="40dp"
+        android:longClickable="true"
+        android:text="Vegetation"
+        android:textSize="25sp" />
+    	
+    	<TextView
+        android:id="@+id/soilApp_welcomeMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/vegApp_welcomeMsg"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:drawableTop="@drawable/soils"
+        android:longClickable="true"
+        android:text="Soils"
+        android:textSize="25sp" />
+
+        <TextView
+        android:id="@+id/appVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/app_version"
+        android:textAppearance="?android:attr/textAppearanceSmall" />   
+
+</RelativeLayout>

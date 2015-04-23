@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>    
+    <color name="bar2_02">#00ff00</color>
+    <color name="line_dark">#ff000000</color>
+    <color name="line_light">#ffffffff</color>
+</resources>

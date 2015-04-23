@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="sage_tag_list_position"/>
+    <item type="id" name="sage_tag_list_viewHolder"/>
+    <item type="id" name="sage_tag_list_hasFocus"/>
+    <item type="id" name="sage_tag_list_isChecked"/>
+    <item type="id" name="sage_tag_list_view"/>
+</resources>

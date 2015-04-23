@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/projectSiteEdit_txtProjectNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/projectSiteEdit_btnSelectProject"
+        android:hint="@string/projectSiteEdit_lblProjectNumber"
+        android:inputType="textCapCharacters"
+        android:imeOptions="actionNext"
+        android:maxLength="50"
+        android:maxLines="1" />
+
+    <EditText
+        android:id="@+id/projectSiteEdit_txtProjectName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/projectSiteEdit_txtProjectNum"
+        android:layout_toStartOf="@+id/projectSiteEdit_btnSelectProject"
+        android:inputType="textCapWords"
+        android:imeOptions="actionNext"
+        android:ems="10"
+        android:hint="@string/projectSiteEdit_lblProjectName"
+        android:maxLength="50"
+        android:maxLines="1" />
+
+    <ImageButton
+        android:id="@+id/projectSiteEdit_btnSelectProject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/projectSiteEdit_txtProjectName"
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        android:contentDescription="@string/projectSiteEdit_descSelectProject"
+        android:src="@android:drawable/ic_search_category_default" />
+
+    <ImageButton
+        android:id="@+id/projectSiteEdit_btnSelectSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/projectSiteEdit_btnSelectProject"
+        android:layout_marginTop="15dp"
+        android:clickable="true"
+        android:contentDescription="@string/projectSiteEdit_descSelectSite"
+        android:src="@android:drawable/ic_search_category_default" />
+
+    <EditText
+        android:id="@+id/projectSiteEdit_txtSiteName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/projectSiteEdit_btnSelectSite"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/projectSiteEdit_btnSelectSite"
+        android:inputType="textCapWords"
+        android:imeOptions="actionDone"
+        android:ems="10"
+        android:hint="@string/projectSiteEdit_lblSiteName"
+        android:maxLength="50"
+        android:maxLines="1" />
+
+</RelativeLayout>

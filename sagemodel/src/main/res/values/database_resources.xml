@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dbName">SAGE_DATABASE</string>
+    
+    <string-array name="objectTableHierarchy">
+        <item>Owner</item>
+        <item>Project</item>
+        <item>Site</item>
+        <item>Location</item>
+        <item>LocationMeta</item>
+        <item>ProjectSite</item>
+        <item>ProjectSiteMeta</item>
+        <item>Coordinate</item>
+        <item>Element</item>
+        <item>ElementMeta</item>
+        <item>ElementGroup</item>
+        <item>ElementGroupMeta</item>
+        <item>GroupElement</item>
+        <item>Station</item>
+        <item>StationMeta</item>
+        <item>StationElement</item>
+        <item>StationElementMeta</item>
+        <item>ObservationType</item>
+        <item>ObservationGroup</item>
+        <item>ObservationGroupMeta</item>
+        <item>GroupObservation</item>
+        <item>GroupObservationMeta</item>
+        <item>Observation</item>
+        <item>ObservationMeta</item>
+        <item>Parameter</item>
+        <item>Measurement</item>
+        <item>MeasurementMeta</item>
+        <item>Photo</item>
+        <item>PhotoMeta</item>
+    </string-array>
+    
+    <string name="databaseManagement_title">Manage Data</string>
+    <string-array name="databaseManagement_options">
+        <item>Observation Groups</item>
+        <item>Projects</item>
+        <item>Import Data</item>
+        <item>Export Data</item>
+    </string-array>
+    
+    <integer-array name="databaseManagement_optionCodes">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
+    
+</resources>
