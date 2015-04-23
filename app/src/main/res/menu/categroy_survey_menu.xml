@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/addDeleteMenu_save"
+        android:icon="?attr/save_pic"
+        app:showAsAction="ifRoom"
+        android:title="@string/save"/>
+    <item 
+        android:id="@+id/categorySurveyMenu_addEditSwitch"
+        android:title="@string/categorySurveyMeny_edit"
+        app:showAsAction="always"
+        app:actionLayout="@layout/switch_menu_layout"/>
+</menu>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_vegetation_main">Vegetation Surveys</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="exit">Exit</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="comments">Comments</string>
+    
+    <!-- Menu Main -->
+    <string name="menuMain_newProject">New Project</string>
+    
+    <!-- Rare Survey -->
+    
+    <string name="rarePlantSampleList">Rare Plant Stations</string>
+    
+	<string name="rarePlantStationListEdit_stationName">Station Name</string>
+	
+	<!-- Rare Survey StationEdit-->
+	<string name="rarePlantStationListEdit_FieldLead">Field Lead:</string>
+	<string name="rarePlantStationListEdit_FieldCrew">Field Crew:</string>
+	<string name="rarePlantStationListEdit_EcoSite">Eco Site:</string>
+	
+	<!-- CategroySurvey -->
+
+	<string name="categorySurvey_deleteElementMessage">Delete Element?</string>
+	<string name="categorySurvey_title">Station: %s</string>
+	<string name="categorySurveyElementsItem_notes">Notes</string>
+	<string name="categorySurveyMenu_add">Add</string>
+	<string name="categorySurveyMeny_edit">Edit</string>
+	<string-array name="categorySurvey_categories">
+	    <item>Trees</item>
+	    <item>Tall Shrubs</item>
+	    <item>Low Shrubs</item>
+	    <item>Forbs</item>
+	    <item>Moss/Lichen</item>
+	    <item>Other</item>
+	</string-array>
+
+</resources>

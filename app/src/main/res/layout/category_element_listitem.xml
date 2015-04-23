@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <TextView 
+        android:id="@android:id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dip"
+        android:hint="@string/hello_world"
+        android:textAppearance="?android:attr/textAppearanceListItem"/>
+    <EditText
+        android:id="@android:id/text2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:layout_below="@android:id/text1"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall" 
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart" 
+     	android:paddingEnd="?android:attr/listPreferredItemPaddingEnd" 
+     	android:minHeight="?android:attr/listPreferredItemHeightSmall" 
+        android:hint="@string/categorySurveyElementsItem_notes"/>
+    <SeekBar
+        android:id="@+id/category_elementView_seekbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dip" 
+        android:layout_below="@android:id/text2"
+        android:max="20"
+	    android:progress="10" />
+    <TextView
+        android:id="@+id/category_elementView_cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/category_elementView_seekbar"
+        android:layout_alignEnd="@id/category_elementView_seekbar"
+        android:layout_alignTop="@+id/category_elementView_seekbar"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:hint="@string/hello_world"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+</RelativeLayout>
+ 

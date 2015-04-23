@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="sagemodel_overflow_pic" format="reference"></attr>
-    <attr name="sagemodel_new_pic" format="reference"></attr>
-    <attr name="sagemodel_search_pic" format="reference"></attr>
-    <attr name="sagemodel_camera_pic" format="reference"></attr>
-    <attr name="sagemodel_accept_pic" format="reference"></attr>
-    <attr name="sagemodel_place_pic" format="reference"></attr>
-    <attr name="sagemodel_save_pic" format="reference"></attr>
-    <attr name="sagemodel_attach_pic" format="reference"></attr>
-    <attr name="sagemodel_discard_pic" format="reference"></attr>
+    <attr name="overflow_pic" format="reference"></attr>
+    <attr name="new_pic" format="reference"></attr>
+    <attr name="search_pic" format="reference"></attr>
+    <attr name="camera_pic" format="reference"></attr>
+    <attr name="accept_pic" format="reference"></attr>
+    <attr name="place_pic" format="reference"></attr>
+    <attr name="save_pic" format="reference"></attr>
+    <attr name="attach_pic" format="reference"></attr>
+    <attr name="discard_pic" format="reference"></attr>
     
-    <attr name="sagemodel_line_color" format="reference"></attr>
+    <attr name="line_color" format="reference"></attr>
 </resources>
