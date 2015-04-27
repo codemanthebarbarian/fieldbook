@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App -->
+    <string name="surveyType">Survey Type</string>
+    <string name="medium_text_placeholder_1">medium_text_placeholder_1</string>
+    
+    <!-- Menu General -->
+    <string name="menu_location">Take GPS Location</string>
+    <string name="menu_picture">Take Picture</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_create">Create</string>
+   
+    <!-- project_list -->
+    <string name="database_settings">Database Settings</string>
+    <string name="new_project">New Project</string>
+    <string name="con_project">Continue Project</string>
+    
+    <!-- create_project -->
+    <string name="createProject_Prompt">New Project</string>
+    <string name="createProject_Number">Project Number</string>
+    <string name="createProject_Name">Project Name</string>
+    <string name="createProject_SiteName">Site Name:</string>
+    <string name="createProject_FieldCrewPrompt">Field Crew:</string>
+    <string name="createProject_SaveProject">Save</string>
+    <string name="createProject_SiteNamePrompt">Enter Site Name or Select From Dropdown</string>
+    
+    <!-- sample_list -->
+    <string name="new_sample">New sample</string>
+    <string name="location_sample">Sample Location</string>
+    <string name="sample_list">Sample Locations</string>
+    
+    <!-- create_sample -->
+    <string name="createSample">Create/Edit Sample Location</string>
+    <string name="createSample_Name">Sample Name</string>
+    <string name="createSample_SaveSample">Save</string>
+    <string name="createSample_GPSLatitude">Latitude:</string>
+    <string name="createSample_GPSLongitude">Logitude:</string>
+    <string name="createSample_GPSAltitude">Altitude:</string>
+    <string name="createSample_GPSAccuracy">Acurracy:</string>
+    <string name="createSample_DateCreated">Date:</string>
+    <string name="createSample_TimeCreated">Time:</string>
+    
+    <!-- collection_form -->
+    <string name="collectionForm_title">Sample Collection</string>
+    <string name="collectionForm_txtDepth">Depth (cm):</string>
+    <string name="collectionForm_litter">Litter</string>
+    <string name="collectionForm_5to15cm">5 "-" 15</string>
+    <string name="collectionForm_15to30cm">15 "-" 30</string>
+    <string name="collectionForm_ThatchPromp">Thatch Thickness (cm) or Litter Depth (cm):</string>
+    <string name="collectionForm_ThatchOnePromp">One</string>
+    <string name="collectionForm_ThatchTwoPromp">Two</string>
+    <string name="collectionForm_ThatchThreePromp">Three</string>
+    <string name="collectionForm_txtSulphurDust">Sulphur Dust:</string>
+    <string name="collectionForm_txtLime">Visible Lime:</string>
+    <string name="collectionForm_txtEfferv">Efferv:</string>
+    <string name="collectionForm_txtSoil">Soil:</string>
+    <string name="collectionForm_txtSoilTemp">Click to Select</string>
+    <string name="collectionForm_txtSoilMoisture">Soil Moisture:</string>
+    <string name="collectionForm_txtVegCoverage">Veg Coverage %:</string>
+    <string name="collectionForm_txtSlope">Slope:</string>
+    <string name="collectionForm_txtShurbs">Shurbs:</string>
+    <string name="collectionForm_txtTrees">Trees:</string>
+    <string name="collectionForm_txtDB">DB Sample:</string>
+    <string name="collectionForm_txtDBDimmensions">Dimmensions:</string>
+    <string name="collectionForm_DBLength">L</string>
+    <string name="collectionForm_DBWidth">W</string>
+    <string name="collectionForm_DBHeight">H</string>
+    <string name="collectionForm_txtDeadfall">Deadfall:</string>
+    <string name="collectionForm_txtWind">Wind:</string>
+    <string name="collectionForm_txtWeather">Weather:</string>
+    <string name="collectionForm_txtComments">Comments:</string>
+    <string name="collectionForm_txtPhoto">Photo:</string>
+    <string name="collectionForm_levels">Levels:</string>
+    <string name="collectionForm_Type">Type:</string>
+    <string name="collectionForm_btnSave">Save</string>
+    <string name="collectionFrom_radioNone">None</string>
+    <string name="collectionForm_radioLow">Low</string>
+    <string name="collectionForm_radioHigh">High</string>
+    
+    <!-- collection_form menu -->
+    <string name="sampleCollectionMenuBD">BD</string>
+    <string name="sampleCollectionMenuBulkDensity">Bulk Density</string>
+    <string name="sampleCollectionMenuDepths">Depths</string>
+    <string name="sampleCollectionMenuLitterDepths">Depths Litter</string>
+    
+    <!-- Location List -->
+    <string name="locationlistitem_completedtext">Sample Colleced</string>
+</resources>

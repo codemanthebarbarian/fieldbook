@@ -14,6 +14,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.amecfw.sage.fieldbook.SettingsActivity"></activity>
+
+        <!-- Vegetation -->
         <activity
             android:name="com.amecfw.sage.vegetation.VegetationMainActivity"
             android:label="@string/title_activity_vegetation_main">
@@ -28,6 +30,22 @@
             android:launchMode="singleTop"
             android:uiOptions="splitActionBarWhenNarrow"
             android:parentActivityName="com.amecfw.sage.vegetation.rareplant.StationManagement"/>
+
+        <!-- sulphur -->
+        <activity
+            android:name="com.amecfw.sage.sulphur.SulphurMainActivity"
+            android:label="@string/app_name" />
+        <activity android:name="com.amecfw.sage.sulphur.project.Create"
+            android:label="@string/createProject_Prompt"/>
+        <activity
+            android:name="com.amecfw.sage.sulphur.sample.SampleList"
+            android:label="@string/sample_list"/>
+        <activity
+            android:name="com.amecfw.sage.sulphur.sample.Create"
+            android:label="@string/createSample"/>
+        <activity
+            android:name="com.amecfw.sage.sulphur.collectionForm.Create"
+            android:label="@string/collectionForm_title"/>
     </application>
 
 </manifest>

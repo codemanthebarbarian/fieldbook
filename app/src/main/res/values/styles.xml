@@ -1,8 +1,28 @@
 <resources>
 
     <style name="AppTheme.Light" parent="android:Theme.Holo.Light">
+        <item name="new_pic">@drawable/ic_action_new_holo_light</item>
+        <item name="search_pic">@drawable/ic_action_search_holo_light</item>
+        <item name="camera_pic">@drawable/ic_action_camera_holo_light</item>
+        <item name="accept_pic">@drawable/ic_action_accept_holo_light</item>
+        <item name="place_pic">@drawable/ic_action_place_holo_light</item>
+        <item name="overflow_pic">@drawable/ic_action_overflow_holo_light</item>
+        <item name="save_pic">@drawable/ic_action_save_holo_light</item>
+        <item name="attach_pic">@drawable/ic_action_attachment_holo_light</item>
+        <item name="discard_pic">@drawable/ic_action_discard_holo_light</item>
+        <item name="line_color">@color/line_dark</item>
     </style>
     <style name="AppTheme.Dark" parent="android:Theme.Holo">
+        <item name="new_pic">@drawable/ic_action_new_holo_dark</item>
+        <item name="search_pic">@drawable/ic_action_search_holo_dark</item>
+        <item name="camera_pic">@drawable/ic_action_camera_holo_dark</item>
+        <item name="accept_pic">@drawable/ic_action_accept_holo_dark</item>
+        <item name="place_pic">@drawable/ic_action_place_holo_dark</item>
+        <item name="overflow_pic">@drawable/ic_action_overflow_holo_dark</item>
+        <item name="save_pic">@drawable/ic_action_save_holo_dark</item>
+        <item name="attach_pic">@drawable/ic_action_attachment_holo_dark</item>
+        <item name="discard_pic">@drawable/ic_action_discard_holo_dark</item>
+        <item name="line_color">@color/line_light</item>
     </style>
 
 </resources>

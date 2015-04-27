@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/createSample_txtSampleName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:hint="@string/createSample_Name"
+        android:inputType="textCapCharacters"
+        android:maxLength="50"
+        android:maxLines="1" >
+    </EditText>
+    
+    <TextView
+        android:id="@+id/createSample_GPSLatitudePromp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createSample_txtSampleName"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:text="@string/createSample_GPSLatitude" />
+    
+    <TextView
+  	    android:id="@+id/createSample_txtGPSLatitude"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content" 
+  	    android:layout_alignBottom="@id/createSample_GPSLatitudePromp"
+  	    android:layout_toRightOf="@id/createSample_GPSLatitudePromp"
+  	    android:text="TextView" />
+    
+  	<TextView
+        android:id="@+id/createSample_GPSLongitudePromp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createSample_GPSLatitudePromp"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:text="@string/createSample_GPSLongitude" />
+ 
+    <TextView
+        android:id="@+id/createSample_txtGPSLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/createSample_GPSLongitudePromp"
+        android:layout_toRightOf="@id/createSample_GPSLongitudePromp"
+        android:text="TextView" />
+    
+   
+    <TextView
+        android:id="@+id/createSample_GPSAltitudePromp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createSample_GPSLongitudePromp"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:text="@string/createSample_GPSAltitude" />
+    
+    <TextView
+ 	    android:id="@+id/createSample_txtGPSAltitude"
+ 	    android:layout_width="wrap_content"
+ 	    android:layout_height="wrap_content"
+ 	    android:layout_alignBottom="@id/createSample_GPSAltitudePromp"
+ 	    android:layout_toRightOf="@id/createSample_GPSAltitudePromp"
+ 	    android:text="TextView" />
+    
+    <TextView
+        android:id="@+id/createSample_GPSAccuracyPromp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:layout_below="@id/createSample_GPSAltitudePromp"
+        android:text="@string/createSample_GPSAccuracy" />
+     
+    <TextView
+        android:id="@+id/createSample_txtGPSAccuracy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/createSample_GPSAccuracyPromp"
+        android:layout_toRightOf="@id/createSample_GPSAccuracyPromp"
+        android:text="TextView" />
+    
+    <TextView
+        android:id="@+id/createSample_DateCreatedPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:layout_below="@id/createSample_GPSAccuracyPromp"
+        android:text="@string/createSample_DateCreated" />
+    
+    <TextView
+        android:id="@+id/createSample__txtDateCreated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/createSample_DateCreatedPrompt"
+        android:layout_alignBottom="@id/createSample_DateCreatedPrompt"
+        android:text="TextView"/>
+   
+    <TextView
+        android:id="@+id/createSample_TimeCreatedPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:layout_below="@id/createSample_DateCreatedPrompt"
+        android:text="@string/createSample_TimeCreated" />
+
+     
+    <TextView 
+        android:id="@+id/createSample_txtTimeCreated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/createSample_TimeCreatedPrompt"
+        android:layout_toRightOf="@id/createSample_TimeCreatedPrompt"
+        android:text="TextView"/>
+    
+    <ListView 
+        android:id="@+id/createSample_listDepths"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:layout_below="@id/createSample_TimeCreatedPrompt"
+        android:choiceMode="multipleChoice" />
+
+    <Button
+        android:id="@+id/createSample_btnSaveSample"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/createSample_txtSampleName"
+        android:layout_alignParentBottom="true"
+        android:text="@string/createSample_SaveSample" />
+  
+</RelativeLayout>

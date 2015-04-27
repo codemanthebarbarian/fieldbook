@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+        
+   <EditText
+        android:id="@+id/createProject_txtProjectNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:hint="@string/createProject_Number"
+        android:imeOptions="actionNext"
+        android:inputType="textCapCharacters"
+        android:maxLength="50"
+        android:maxLines="1" >
+    </EditText>
+    
+    <EditText
+        android:id="@+id/createProject_txtProjectName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createProject_txtProjectNum"
+        android:layout_marginTop="5dp"
+        android:imeOptions="actionNext"
+        android:hint="@string/createProject_Name"
+        android:inputType="textCapSentences"
+        android:maxLength="50"
+        android:maxLines="1" >
+    </EditText>
+    
+    <TextView
+           android:id="@+id/createProject_txtFieldCrewPrompt"
+           android:layout_width="100dp"
+           android:layout_height="wrap_content"
+           android:text="@string/createProject_FieldCrewPrompt"
+           android:layout_below="@+id/createProject_txtProjectName"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <ListView
+        android:id="@+id/createProject_lstFieldCrew"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_below="@+id/createProject_txtProjectName"
+        android:layout_toRightOf="@+id/createProject_txtFieldCrewPrompt"
+        android:choiceMode="multipleChoice" >
+    </ListView>"
+       
+    <TextView
+           android:id="@+id/createProject_txtSiteNamePrompt"
+           android:layout_width="100dp"
+           android:layout_height="wrap_content"
+           android:text="@string/createProject_SiteName"
+           android:layout_below="@+id/createProject_lstFieldCrew"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+    <EditText 
+        android:id="@+id/createProject_txtSiteName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/createProject_SiteNamePrompt"
+        android:inputType="textCapSentences"
+        android:imeOptions="actionDone"
+        android:maxLength="50"
+        android:maxLines="1"
+        android:layout_alignLeft="@+id/createProject_lstFieldCrew"
+        android:layout_alignTop="@+id/createProject_txtSiteNamePrompt"/>
+
+    <Spinner
+        android:id="@+id/createProject_sponnerSiteName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/createProject_txtSiteNamePrompt" 
+        android:layout_below="@+id/createProject_txtSiteName"/>
+    
+    <Button
+        android:id="@+id/createProject_btnSaveProject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/createProject_sponnerSiteName"
+        android:text="@string/createProject_SaveProject" 
+        android:onClick="onClick_Save"/>
+
+
+</RelativeLayout>
