@@ -13,7 +13,7 @@
      	android:paddingEnd="?android:attr/listPreferredItemPaddingEnd" 
      	android:minHeight="?android:attr/listPreferredItemHeightSmall"
      	android:textAppearance="?android:attr/textAppearanceLarge"
-        android:drawableEnd="?attr/sagemodel_search_pic"/>
+        android:drawableEnd="?attr/search_pic"/>
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

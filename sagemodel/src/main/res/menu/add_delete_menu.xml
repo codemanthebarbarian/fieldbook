@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/addDeleteMenu_add"
-        android:icon="?attr/sagemodel_new_pic"
+        android:icon="?attr/new_pic"
         android:showAsAction="ifRoom" 
         android:title="@string/sagemodel_menuadd" />
     <item android:id="@+id/addDeleteMenu_save"
-        android:icon="?attr/sagemodel_save_pic"
+        android:icon="?attr/save_pic"
         android:showAsAction="ifRoom"
         android:title="@string/sagemodel_menusave"/>
     <item android:id="@+id/addDeleteMenu_delete"
-        android:icon="?attr/sagemodel_discard_pic"
+        android:icon="?attr/discard_pic"
         android:showAsAction="ifRoom"
         android:title="@string/sagemodel_menudelete"/>
 </menu>
