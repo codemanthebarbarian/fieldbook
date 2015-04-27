@@ -59,20 +59,14 @@ public class CategorySurvey extends Activity {
 //		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
 //			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //		else setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		setTheme(SageApplication.getInstance().getThemeID());
-		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.category_survey);
-        ActionBar actionBar = getActionBar();
-		actionBar.setIcon(R.drawable.leaf);
-        actionBar.setCustomView(R.layout.switch_menu_layout);
-        addEdit = (Switch) actionBar.getCustomView().findViewById(R.id.switchMenuItem);
-        addEdit.setOnCheckedChangeListener(addEditListener);
-        //addEdit.setChecked(viewState.getState() == ViewState.EDIT);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
+        setTheme(SageApplication.getInstance().getThemeID());
+        super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.category_survey);
+        this.getActionBar().setIcon(R.drawable.leaf);
         searchView = (SearchView) findViewById(R.id.rareplant_categorySurvey_searchView);
-		if(savedInstanceState != null) loadSavedInstance(savedInstanceState);
-		else loadInitialView();
-		viewState.addListener(stateListener);
+        if(savedInstanceState != null) loadSavedInstance(savedInstanceState);
+        else loadInitialView();
+        viewState.addListener(stateListener);
 	}
 	
 	private void loadSavedInstance(Bundle savedInstanceState){
@@ -130,15 +124,14 @@ public class CategorySurvey extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.categroy_survey_menu, menu);
-		//addEdit = (Switch) menu.findItem(R.id.categorySurveyMenu_addEditSwitch).getActionView().findViewById(R.id.switchMenuItem);
-        //addEdit = (Switch) menu.findItem(R.id.categorySurveyMenu_addEditSwitch).getActionView();
-		//addEdit.setOnCheckedChangeListener(addEditListener);
-		//addEdit.setChecked(viewState.getState() == ViewState.EDIT);
-		saveButton = menu.findItem(R.id.addDeleteMenu_save);
-		saveButton.setVisible(viewState.getState() == ViewState.EDIT);
-		saveButton.setOnMenuItemClickListener(saveMenuItemClickListener);
-		return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.categroy_survey_menu, menu);
+        addEdit = (Switch) menu.findItem(R.id.categorySurveyMenu_addEditSwitch).getActionView().findViewById(R.id.switchMenuItem);
+        addEdit.setOnCheckedChangeListener(addEditListener);
+        addEdit.setChecked(viewState.getState() == ViewState.EDIT);
+        saveButton = menu.findItem(R.id.addDeleteMenu_save);
+        saveButton.setVisible(viewState.getState() == ViewState.EDIT);
+        saveButton.setOnMenuItemClickListener(saveMenuItemClickListener);
+        return super.onCreateOptionsMenu(menu);
 	}
 	
 	private MenuItem.OnMenuItemClickListener saveMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {		
