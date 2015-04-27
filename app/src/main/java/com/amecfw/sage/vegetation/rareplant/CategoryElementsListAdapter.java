@@ -168,7 +168,7 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 	public interface OnEditListener {
 		/**
 		 * the method raised when an item has been editied
-		 * @param the viewModel that was edited
+		 * @param viewModel that was edited
 		 */
 		public void onEdit(ViewModel viewModel);
 	}
