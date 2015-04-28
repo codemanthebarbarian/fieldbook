@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.amecfw.sage.fieldbook.R;
 //import com.amecfw.sage.soil.SoilsMainActivity;
 //import com.amecfw.sage.sulphur.SulphurMainActivity;
+import com.amecfw.sage.soil.SoilsMainActivity;
 import com.amecfw.sage.sulphur.SulphurMainActivity;
 import com.amecfw.sage.vegetation.VegetationMainActivity;
 
@@ -40,18 +41,13 @@ public class HomePage extends Fragment implements OnClickListener{
         if (v.getId() == vegButton.getId()) {
             Intent intent = new Intent(getActivity(), VegetationMainActivity.class);
             getActivity().startActivity(intent);
-
         }else if(v.getId() == sulphurButton.getId()){
 			Intent intent = new Intent(getActivity(), SulphurMainActivity.class);
 			getActivity().startActivity(intent);
+		}else if(v.getId() == soilButton.getId()){
+			Intent intent = new Intent(getActivity(), SoilsMainActivity.class);
+			getActivity().startActivity(intent);
 		}
-// else if (v.getId() == vegButton.getId()){
-//			Intent intent = new Intent(getActivity(), VegetationMainActivity.class);
-//			getActivity().startActivity(intent);
-//		}else if(v.getId() == soilButton.getId()){
-//			Intent intent = new Intent(getActivity(), SoilsMainActivity.class);
-//			getActivity().startActivity(intent);
-//		}
 	}
 	
 }

@@ -46,6 +46,12 @@
         <activity
             android:name="com.amecfw.sage.sulphur.collectionForm.Create"
             android:label="@string/collectionForm_title"/>
+
+        <!-- soils -->
+        <activity
+            android:name="com.amecfw.sage.soil.SoilsMainActivity"
+            android:label="@string/soilsMain_newProject"
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>
