@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menuSampleCollectionLocation"
+        android:icon="?attr/place_pic"
+        android:showAsAction="always"
+        android:title="@string/menu_location" />
+    <item android:id="@+id/menuSampleCollectionPicture"
+        android:icon="?attr/camera_pic"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_picture" />
+    <item android:id="@+id/menuSampleCollectionBulkDensity"
+        android:showAsAction="ifRoom"
+        android:titleCondensed="@string/sampleCollectionMenuBD"
+        android:title="@string/sampleCollectionMenuBulkDensity"/>
+    <item android:id="@+id/menuSampleCollectionDepths"
+        android:showAsAction="ifRoom"
+        android:titleCondensed="@string/sampleCollectionMenuDepths"
+        android:title="@string/sampleCollectionMenuLitterDepths"/>
+</menu>

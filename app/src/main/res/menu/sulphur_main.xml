@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.amec.sage.sulphurfieldbook.MainActivity" >
+ 	
+ 	<item android:id="@+id/dayNightTheme"
+        android:title="@string/themeMode" 
+        android:showAsAction="always|withText"></item>
+    <item
+        android:id="@+id/database_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/database_settings"/>
+    
+</menu>

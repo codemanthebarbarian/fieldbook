@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menuNewSample"
+        android:icon="?attr/new_pic"
+        android:showAsAction="ifRoom" 
+        android:title="@string/new_sample" />
+    <item android:id="@+id/menuSampleLocation"
+        android:icon="?attr/place_pic"
+        android:showAsAction="ifRoom"
+        android:title="@string/location_sample" />    
+</menu>
