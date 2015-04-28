@@ -8,6 +8,8 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="comments">Comments</string>
+
+    <string name="elements_search">Search Elements</string>
     
     <!-- Menu Main -->
     <string name="menuMain_newProject">New Project</string>
@@ -24,7 +26,6 @@
 	<string name="rarePlantStationListEdit_EcoSite">Eco Site:</string>
 	
 	<!-- CategroySurvey -->
-
 	<string name="categorySurvey_deleteElementMessage">Delete Element?</string>
 	<string name="categorySurvey_title">Station: %s</string>
 	<string name="categorySurveyElementsItem_notes">Notes</string>

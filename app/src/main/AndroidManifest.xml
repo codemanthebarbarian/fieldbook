@@ -30,6 +30,13 @@
             android:launchMode="singleTop"
             android:uiOptions="splitActionBarWhenNarrow"
             android:parentActivityName="com.amecfw.sage.vegetation.rareplant.StationManagement"/>
+        <activity android:name="com.amecfw.sage.vegetation.elements.SearchActivity">
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable_elements" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
 
         <!-- sulphur -->
         <activity

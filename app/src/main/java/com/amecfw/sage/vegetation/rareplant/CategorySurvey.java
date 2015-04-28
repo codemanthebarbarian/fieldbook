@@ -78,8 +78,8 @@ public class CategorySurvey extends Activity {
 		FragmentManager fm = getFragmentManager();
 		Fragment f = fm.findFragmentByTag(CategoryFragment.class.getName());
 		if(f != null) ((CategoryFragment)f).setOnCategorySelectedHandler(categorySelectedHandler);
-		f = fm.findFragmentByTag(ElementsListDialogFragment.class.getName());
-		if(f != null) searchView.setOnQueryTextListener(((ElementsListDialogFragment)f).getOnQueryTextListener());
+		//f = fm.findFragmentByTag(ElementsListDialogFragment.class.getName());
+		//if(f != null) searchView.setOnQueryTextListener(((ElementsListDialogFragment)f).getOnQueryTextListener());
 		f = fm.findFragmentByTag(GroupsListDialogFragment.class.getName());
 		if(f != null) ((GroupsListDialogFragment)f).setGroupSelectedHandler(elementGroupSelectedListener);
 	}
