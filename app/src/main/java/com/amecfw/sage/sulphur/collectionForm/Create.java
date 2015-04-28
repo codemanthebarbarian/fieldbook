@@ -117,7 +117,7 @@ public class Create extends Activity implements OnClickListener {
 	     visLime = (RadioGroup) findViewById(R.id.collectionForm_radioVisLime);
 	     deadfall = (RadioGroup) findViewById(R.id.collectionForm_radioDeadfall);
 	     messages = (TextView) findViewById(R.id.collectionForm_messages);
-	     depths.setText(locationProxy.getDepths().getValue());
+         if(locationProxy.getDepths() != null) depths.setText(locationProxy.getDepths().getValue());
 	 }
 	 
 	 private void getLocationProxy(){
