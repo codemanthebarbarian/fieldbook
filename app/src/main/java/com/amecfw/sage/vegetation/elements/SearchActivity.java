@@ -13,10 +13,14 @@ import com.amecfw.sage.model.SageApplication;
  */
 public class SearchActivity extends ListActivity {
 
+    ListView list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(SageApplication.getInstance().getThemeID());
         super.onCreate(savedInstanceState);
+        setContentView(com.amecfw.sage.model.R.layout.simple_list_layout);
+        list = (ListView) findViewById(android.R.id.list);
         handleIntent(getIntent());
     }
 

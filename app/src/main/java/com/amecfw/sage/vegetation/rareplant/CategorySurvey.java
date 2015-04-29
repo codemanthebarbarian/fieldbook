@@ -16,6 +16,7 @@ import com.amecfw.sage.util.OnItemSelectedHandler;
 import com.amecfw.sage.util.ViewState;
 import com.amecfw.sage.fieldbook.R;
 import com.amecfw.sage.vegetation.elements.GroupsListDialogFragment;
+import com.amecfw.sage.vegetation.elements.SearchActivity;
 import com.amecfw.sage.vegetation.rareplant.CategoryFragment.ViewModel;
 
 import android.app.ActionBar;
@@ -23,11 +24,18 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.FrameLayout;
 import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -63,13 +71,18 @@ public class CategorySurvey extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.category_survey);
         this.getActionBar().setIcon(R.drawable.leaf);
+        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) findViewById(R.id.rareplant_categorySurvey_searchView);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        //searchView.setOnQueryTextListener(queryTextListener);
+        searchView.setOnQueryTextFocusChangeListener(queryFocusListener);
         if(savedInstanceState != null) loadSavedInstance(savedInstanceState);
         else loadInitialView();
         viewState.addListener(stateListener);
 	}
-	
-	private void loadSavedInstance(Bundle savedInstanceState){
+
+    private void loadSavedInstance(Bundle savedInstanceState){
 		viewState = savedInstanceState.getParcelable(ARG_VIEW_STATE);
 		proxy = SageApplication.getInstance().removeItem(ARG_PROXY);
 		isDirty = savedInstanceState.getBoolean(ARG_IS_DIRTY, true);
@@ -154,6 +167,53 @@ public class CategorySurvey extends Activity {
 		boolean saved = CategorySurveyService.saveOrUpdate(proxy);
 		isDirty = !saved;
 	}
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Search
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+    }
+
+    private SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener(){
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+            return false;
+        }
+        @Override
+        public boolean onQueryTextChange(String s) {
+            return false;
+        }
+    };
+
+    private View.OnFocusChangeListener queryFocusListener = new View.OnFocusChangeListener(){
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(viewState.getState() == ViewState.ADD && view.getId() == searchView.getId() && b){
+                Fragment f = getFragmentManager().findFragmentByTag(ElementsListDialogFragment.class.getName());
+                if(f != null){
+                    ElementsListDialogFragment ef = (ElementsListDialogFragment) f;
+                    ef.setElements(getElements(allGroup));
+                    searchView.setOnQueryTextListener(ef.getOnQueryTextListener());
+                    ef.setOnItemClickListener(queryItemClickListener);
+                }
+            }
+        }
+    };
+
+    private AdapterView.OnItemClickListener queryItemClickListener = new AdapterView.OnItemClickListener () {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            searchView.setOnQueryTextListener(null);
+            searchView.clearFocus();
+            searchView.setQuery(null, false);
+        }
+    };
+
+    // END Search
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// VIEW STATE MANAGEMENT //////////////////////////////////////////////////////////////////////
@@ -288,10 +348,12 @@ public class CategorySurvey extends Activity {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// ELEMENT METHODS ////////////////////////////////////////////////////////////////////////////
-	
+
+    ElementGroup allGroup;
+
 	private List<ElementGroup> getGroups(){
 		ElementService es = new ElementService(SageApplication.getInstance().getDaoSession());
-		ElementGroup allGroup = es.getAllGroup(); //run to create or update the all group, it will be then included in the next line
+		allGroup = es.getAllGroup(); //run to create or update the all group, it will be then included in the next line
 		List<ElementGroup> all = new ElementService(SageApplication.getInstance().getDaoSession()).findByOwner(null);
 		return all;
 	}
