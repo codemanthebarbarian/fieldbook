@@ -19,7 +19,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.util.SparseBooleanArray;
 
-public class ElementsListAdapter extends ListAdapter<Element> implements Filterable {
+public class ElementsMultiSelectListAdapter extends ListAdapter<Element> implements Filterable {
 	
 	public static final int DISPLAY_SCODE_SCIENTIFIC = 1;
 	public static final int DISPLAY_SCODE_COMMON = 2;
@@ -29,7 +29,7 @@ public class ElementsListAdapter extends ListAdapter<Element> implements Filtera
 	private int displayMode = 1;
 	private SparseBooleanArray checkedItems;
 
-	public ElementsListAdapter(Context context, List<Element> elements, int displayMode){
+	public ElementsMultiSelectListAdapter(Context context, List<Element> elements, int displayMode){
 		super(context, elements);
 		if(displayMode < 1 || displayMode > 4) this.displayMode = 1;
 		else this.displayMode = displayMode;

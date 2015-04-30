@@ -24,7 +24,7 @@ import com.amecfw.sage.model.StationElement;
 import com.amecfw.sage.model.StationElementMeta;
 import com.amecfw.sage.model.service.DescriptorServices;
 import com.amecfw.sage.proxy.ViewModelBaseEquatable;
-import com.amecfw.sage.ui.ElementsListAdapter;
+import com.amecfw.sage.ui.ElementsMultiSelectListAdapter;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.ListAdapter;
 import com.amecfw.sage.fieldbook.R;
@@ -86,10 +86,10 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 	
 	private String getDisplayName(ViewModel vm){
 		switch (viewMode){
-		case ElementsListAdapter.DISPLAY_SCODE_COMMON:
-		case ElementsListAdapter.DISPLAY_SCODE_SCIENTIFIC:
+		case ElementsMultiSelectListAdapter.DISPLAY_SCODE_COMMON:
+		case ElementsMultiSelectListAdapter.DISPLAY_SCODE_SCIENTIFIC:
 			return vm.getScode();
-		case ElementsListAdapter.DISPLAY_SCIENTIFIC_COMMON:
+		case ElementsMultiSelectListAdapter.DISPLAY_SCIENTIFIC_COMMON:
 			return vm.getScientificName();
 		default:
 			return vm.getCommonName();
