@@ -189,19 +189,14 @@ public class CategorySurvey extends Activity {
         @Override
         public void onFocusChange(View view, boolean b) {
             if(viewState.getState() == ViewState.ADD && view.getId() == searchView.getId() && b){
-                Fragment f = getFragmentManager().findFragmentByTag(ElementsSingleClickListDialogFragment.class.getName());
-                if(f == null){
-					ElementsSingleClickListDialogFragment ef =  new ElementsSingleClickListDialogFragment();
+
+				Fragment f = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
+                if(f != null){
+					ElementsMultiSelectListDialogFragment ef =  (ElementsMultiSelectListDialogFragment)f;
                     ef.setElements(getElements(allGroup));
-					getFragmentManager().beginTransaction().add(R.id.rareplant_categroySurvey_containerB, ef, ElementsSingleClickListDialogFragment.class.getName()).commit();
 					ef.setOnItemClickListener(queryItemClickListener);
 					searchView.setOnQueryTextListener(ef.getOnQueryTextListener());
-                }else{
-					ElementsSingleClickListDialogFragment ef = (ElementsSingleClickListDialogFragment)f;
-					ef.setElements(getElements(allGroup));
-					//ef.setOnItemClickListener(queryItemClickListener);
-					searchView.setOnQueryTextListener(ef.getOnQueryTextListener());
-				}
+                }
             }
         }
     };
@@ -213,6 +208,11 @@ public class CategorySurvey extends Activity {
             searchView.setOnQueryTextListener(null);
             searchView.clearFocus();
             searchView.setQuery(null, false);
+			Fragment f = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
+			if(f != null){
+				ElementsMultiSelectListDialogFragment ef =  new ElementsMultiSelectListDialogFragment();
+				ef.setOnItemClickListener(null);
+			}
         }
     };
 

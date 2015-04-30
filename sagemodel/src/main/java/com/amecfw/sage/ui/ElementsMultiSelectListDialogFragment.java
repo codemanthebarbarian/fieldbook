@@ -43,6 +43,7 @@ public class ElementsMultiSelectListDialogFragment extends DialogFragment implem
 		}
 		if(elements == null) elements = new ArrayList<Element>();
 		adapter = new ElementsMultiSelectListAdapter(getActivity(), elements, ElementsMultiSelectListAdapter.DISPLAY_COMMON_SCIENTIFIC);
+		adapter.setOnItemClickListener(itemClickListener); // adapter contains a clickable view so manually listen for click events
 		list = (ListView) view.findViewById(android.R.id.list);
 		list.setChoiceMode(choiceMode);
 		list.setAdapter(adapter);
@@ -53,7 +54,7 @@ public class ElementsMultiSelectListDialogFragment extends DialogFragment implem
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) { 
-			view.callOnClick();
+			if(parent == null) parent = list;
 			if(externalItemClickListener != null) externalItemClickListener.onItemClick(parent, view, position, id); 
 			if(onItemSelectedHandler != null) onItemSelectedHandler.onItemSelected(adapter.get(position));
 		}

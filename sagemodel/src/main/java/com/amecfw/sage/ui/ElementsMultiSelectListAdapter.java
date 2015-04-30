@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -123,8 +124,12 @@ public class ElementsMultiSelectListAdapter extends ListAdapter<Element> impleme
 			checkedItems.put(position, !isChecked);
 			ViewHolder viewHolder = (ViewHolder) v.getTag(com.amecfw.sage.model.R.id.sage_tag_list_viewHolder);
 			viewHolder.checkBox.setChecked(!isChecked);
+			if(onItemClickListener != null) onItemClickListener.onItemClick(null, v, position, getItemId(position));
 		}
 	};
+
+	private AdapterView.OnItemClickListener onItemClickListener;
+	public void setOnItemClickListener(AdapterView.OnItemClickListener listener) { onItemClickListener = listener; }
 	
 	private void setText(ViewHolder holder, String text1, String text2){
 		holder.text1.setText(text1);
