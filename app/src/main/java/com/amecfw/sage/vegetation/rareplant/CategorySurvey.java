@@ -9,7 +9,9 @@ import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.service.ElementService;
 import com.amecfw.sage.ui.CancelSaveExitDialog;
-import com.amecfw.sage.ui.ElementsListDialogFragment;
+import com.amecfw.sage.ui.ElementsMultiSelectListDialogFragment;
+import com.amecfw.sage.ui.ElementsSingleClickListAdapter;
+import com.amecfw.sage.ui.ElementsSingleClickListDialogFragment;
 import com.amecfw.sage.util.ActionEvent;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.util.OnItemSelectedHandler;
@@ -18,14 +20,18 @@ import com.amecfw.sage.fieldbook.R;
 import com.amecfw.sage.vegetation.elements.GroupsListDialogFragment;
 import com.amecfw.sage.vegetation.rareplant.CategoryFragment.ViewModel;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SearchView;
@@ -63,13 +69,18 @@ public class CategorySurvey extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.category_survey);
         this.getActionBar().setIcon(R.drawable.leaf);
+        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) findViewById(R.id.rareplant_categorySurvey_searchView);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        //searchView.setOnQueryTextListener(queryTextListener);
+        searchView.setOnQueryTextFocusChangeListener(queryFocusListener);
         if(savedInstanceState != null) loadSavedInstance(savedInstanceState);
         else loadInitialView();
         viewState.addListener(stateListener);
 	}
-	
-	private void loadSavedInstance(Bundle savedInstanceState){
+
+    private void loadSavedInstance(Bundle savedInstanceState){
 		viewState = savedInstanceState.getParcelable(ARG_VIEW_STATE);
 		proxy = SageApplication.getInstance().removeItem(ARG_PROXY);
 		isDirty = savedInstanceState.getBoolean(ARG_IS_DIRTY, true);
@@ -78,8 +89,8 @@ public class CategorySurvey extends Activity {
 		FragmentManager fm = getFragmentManager();
 		Fragment f = fm.findFragmentByTag(CategoryFragment.class.getName());
 		if(f != null) ((CategoryFragment)f).setOnCategorySelectedHandler(categorySelectedHandler);
-		f = fm.findFragmentByTag(ElementsListDialogFragment.class.getName());
-		if(f != null) searchView.setOnQueryTextListener(((ElementsListDialogFragment)f).getOnQueryTextListener());
+		//f = fm.findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
+		//if(f != null) searchView.setOnQueryTextListener(((ElementsMultiSelectListDialogFragment)f).getOnQueryTextListener());
 		f = fm.findFragmentByTag(GroupsListDialogFragment.class.getName());
 		if(f != null) ((GroupsListDialogFragment)f).setGroupSelectedHandler(elementGroupSelectedListener);
 	}
@@ -105,9 +116,9 @@ public class CategorySurvey extends Activity {
 		groupsFragment.setGroupSelectedHandler(elementGroupSelectedListener);
 		trans.add(R.id.rareplant_categroySurvey_containerA, groupsFragment, GroupsListDialogFragment.class.getName());
 		//Set the elements
-		ElementsListDialogFragment elementsFragment = new ElementsListDialogFragment();
+		ElementsMultiSelectListDialogFragment elementsFragment = new ElementsMultiSelectListDialogFragment();
 		elementsFragment.setElements(new ArrayList<Element>());
-		trans.add(R.id.rareplant_categroySurvey_containerB, elementsFragment, ElementsListDialogFragment.class.getName());
+		trans.add(R.id.rareplant_categroySurvey_containerB, elementsFragment, ElementsMultiSelectListDialogFragment.class.getName());
 		trans.commit();
 		searchView.setOnQueryTextListener(elementsFragment.getOnQueryTextListener());
 	}
@@ -155,6 +166,59 @@ public class CategorySurvey extends Activity {
 		isDirty = !saved;
 	}
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Search
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+    }
+
+    private SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener(){
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+            return false;
+        }
+        @Override
+        public boolean onQueryTextChange(String s) {
+            return false;
+        }
+    };
+
+    private View.OnFocusChangeListener queryFocusListener = new View.OnFocusChangeListener(){
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(viewState.getState() == ViewState.ADD && view.getId() == searchView.getId() && b){
+
+				Fragment f = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
+                if(f != null){
+					ElementsMultiSelectListDialogFragment ef =  (ElementsMultiSelectListDialogFragment)f;
+                    ef.setElements(getElements(allGroup));
+					ef.setOnItemClickListener(queryItemClickListener);
+					searchView.setOnQueryTextListener(ef.getOnQueryTextListener());
+                }
+            }
+        }
+    };
+
+    private AdapterView.OnItemClickListener queryItemClickListener = new AdapterView.OnItemClickListener () {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            searchView.setOnQueryTextListener(null);
+            searchView.clearFocus();
+            searchView.setQuery(null, false);
+			Fragment f = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
+			if(f != null){
+				ElementsMultiSelectListDialogFragment ef =  new ElementsMultiSelectListDialogFragment();
+				ef.setOnItemClickListener(null);
+			}
+        }
+    };
+
+    // END Search
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// VIEW STATE MANAGEMENT //////////////////////////////////////////////////////////////////////
 	
@@ -186,11 +250,11 @@ public class CategorySurvey extends Activity {
 			saveButton.setVisible(true);
 			break;				
 		case ViewState.ADD:
-			fragment = getFragmentManager().findFragmentByTag(ElementsListDialogFragment.class.getName());
-			ElementsListDialogFragment elementsFrag = fragment == null ? new ElementsListDialogFragment() :
-				(ElementsListDialogFragment) fragment;
+			fragment = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
+			ElementsMultiSelectListDialogFragment elementsFrag = fragment == null ? new ElementsMultiSelectListDialogFragment() :
+				(ElementsMultiSelectListDialogFragment) fragment;
 			getFragmentManager().beginTransaction().replace(R.id.rareplant_categroySurvey_containerB, elementsFrag, 
-					ElementsListDialogFragment.class.getName()).commit();
+					ElementsMultiSelectListDialogFragment.class.getName()).commit();
 			saveButton.setVisible(false);
 			break;			
 		}
@@ -232,9 +296,9 @@ public class CategorySurvey extends Activity {
 	 */
 	private void updateCategory(CategoryFragment.ViewModel viewModel){
 		currentCategory = viewModel;
-		Fragment fragment = getFragmentManager().findFragmentByTag(ElementsListDialogFragment.class.getName());
+		Fragment fragment = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
 		if(fragment != null) {
-			List<Element> selectedElements = ((ElementsListDialogFragment)fragment).getCheckedItems();
+			List<Element> selectedElements = ((ElementsMultiSelectListDialogFragment)fragment).getCheckedItems();
 			int added = proxy.addElements(selectedElements, currentCategory.getCategoryName());
 			currentCategory.setElementCount(currentCategory.getElementCount() + added);
 			if(!isDirty && added > 0) isDirty = true;
@@ -288,10 +352,12 @@ public class CategorySurvey extends Activity {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// ELEMENT METHODS ////////////////////////////////////////////////////////////////////////////
-	
+
+    ElementGroup allGroup;
+
 	private List<ElementGroup> getGroups(){
 		ElementService es = new ElementService(SageApplication.getInstance().getDaoSession());
-		ElementGroup allGroup = es.getAllGroup(); //run to create or update the all group, it will be then included in the next line
+		allGroup = es.getAllGroup(); //run to create or update the all group, it will be then included in the next line
 		List<ElementGroup> all = new ElementService(SageApplication.getInstance().getDaoSession()).findByOwner(null);
 		return all;
 	}
@@ -310,8 +376,8 @@ public class CategorySurvey extends Activity {
 
 	private void onGroupSelected(ElementGroup group){
 		Toast.makeText(this, group.getName(), Toast.LENGTH_SHORT).show();
-		Fragment fragment = getFragmentManager().findFragmentByTag(ElementsListDialogFragment.class.getName());
-		if(fragment != null) ((ElementsListDialogFragment)fragment).setElements(getElements(group));
+		Fragment fragment = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
+		if(fragment != null) ((ElementsMultiSelectListDialogFragment)fragment).setElements(getElements(group));
 	}
 	
 	// END ELEMENT METHODS ////////////////////////////////////////////////////////////////////////

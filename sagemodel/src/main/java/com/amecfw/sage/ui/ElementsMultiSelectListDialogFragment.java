@@ -20,13 +20,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 
-public class ElementsListDialogFragment extends DialogFragment implements ActionEvent.Listener {
+public class ElementsMultiSelectListDialogFragment extends DialogFragment implements ActionEvent.Listener {
 	
-	public static final String ARG_CHOICE_MODE = "sage.vegetation.rareplant.ElementsListDialogFragment.choiceMode";
+	public static final String ARG_CHOICE_MODE = "sage.vegetation.rareplant.ElementsMultiSelectListDialogFragment.choiceMode";
 	
 	private List<Element> elements;
 	private ListView list;
-	private ElementsListAdapter adapter;
+	private ElementsMultiSelectListAdapter adapter;
 	private int choiceMode;
 	
 	@Override
@@ -42,7 +42,8 @@ public class ElementsListDialogFragment extends DialogFragment implements Action
 			choiceMode = args.getInt(ARG_CHOICE_MODE, AbsListView.CHOICE_MODE_MULTIPLE);
 		}
 		if(elements == null) elements = new ArrayList<Element>();
-		adapter = new ElementsListAdapter(getActivity(), elements, ElementsListAdapter.DISPLAY_COMMON_SCIENTIFIC);
+		adapter = new ElementsMultiSelectListAdapter(getActivity(), elements, ElementsMultiSelectListAdapter.DISPLAY_COMMON_SCIENTIFIC);
+		adapter.setOnItemClickListener(itemClickListener); // adapter contains a clickable view so manually listen for click events
 		list = (ListView) view.findViewById(android.R.id.list);
 		list.setChoiceMode(choiceMode);
 		list.setAdapter(adapter);
@@ -53,7 +54,7 @@ public class ElementsListDialogFragment extends DialogFragment implements Action
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) { 
-			view.callOnClick();
+			if(parent == null) parent = list;
 			if(externalItemClickListener != null) externalItemClickListener.onItemClick(parent, view, position, id); 
 			if(onItemSelectedHandler != null) onItemSelectedHandler.onItemSelected(adapter.get(position));
 		}
