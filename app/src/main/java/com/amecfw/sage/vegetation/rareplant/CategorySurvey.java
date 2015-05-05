@@ -2,6 +2,8 @@ package com.amecfw.sage.vegetation.rareplant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import com.amecfw.sage.model.Element;
 import com.amecfw.sage.model.ElementGroup;
@@ -10,15 +12,12 @@ import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.service.ElementService;
 import com.amecfw.sage.ui.CancelSaveExitDialog;
 import com.amecfw.sage.ui.ElementsMultiSelectListDialogFragment;
-import com.amecfw.sage.ui.ElementsSingleClickListAdapter;
-import com.amecfw.sage.ui.ElementsSingleClickListDialogFragment;
 import com.amecfw.sage.util.ActionEvent;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.util.OnItemSelectedHandler;
 import com.amecfw.sage.util.ViewState;
 import com.amecfw.sage.fieldbook.R;
 import com.amecfw.sage.vegetation.elements.GroupsListDialogFragment;
-import com.amecfw.sage.vegetation.rareplant.CategoryFragment.ViewModel;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -69,6 +68,7 @@ public class CategorySurvey extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.category_survey);
         this.getActionBar().setIcon(R.drawable.leaf);
+		uiMutex = new Semaphore(1, true);
         SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) findViewById(R.id.rareplant_categorySurvey_searchView);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -88,7 +88,10 @@ public class CategorySurvey extends Activity {
 		if(viewState == null) viewState = ViewState.getViewStateAdd();
 		FragmentManager fm = getFragmentManager();
 		Fragment f = fm.findFragmentByTag(CategoryFragment.class.getName());
-		if(f != null) ((CategoryFragment)f).setOnCategorySelectedHandler(categorySelectedHandler);
+		if(f != null){
+			((CategoryFragment)f).setOnCategorySelectedHandler(categorySelectedHandler);
+			((CategoryFragment)f).setOnCategoryLongClickSelectedHandler(categoryLongSelectHandler);
+		}
 		//f = fm.findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
 		//if(f != null) searchView.setOnQueryTextListener(((ElementsMultiSelectListDialogFragment)f).getOnQueryTextListener());
 		f = fm.findFragmentByTag(GroupsListDialogFragment.class.getName());
@@ -109,6 +112,7 @@ public class CategorySurvey extends Activity {
 		CategoryFragment categoryFrag = new CategoryFragment();
 		categoryFrag.setCategoryViewModels(getCategories());
 		categoryFrag.setOnCategorySelectedHandler(categorySelectedHandler);
+		categoryFrag.setOnCategoryLongClickSelectedHandler(categoryLongSelectHandler);
 		trans.add(R.id.rareplant_categroySurvey_containerC, categoryFrag, CategoryFragment.class.getName());
 		//Set the groups
 		GroupsListDialogFragment groupsFragment = new GroupsListDialogFragment();
@@ -221,13 +225,15 @@ public class CategorySurvey extends Activity {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// VIEW STATE MANAGEMENT //////////////////////////////////////////////////////////////////////
+
+	private Semaphore uiMutex;
 	
 	private OnCheckedChangeListener addEditListener = new OnCheckedChangeListener(){
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
-				boolean isChecked) { 
+				boolean isChecked) {
 			if (isChecked) viewState.setStateEdit();
-			else viewState.setStateAdd(); 
+			else viewState.setStateAdd();
 		}		
 	};
 	
@@ -247,6 +253,8 @@ public class CategorySurvey extends Activity {
 				(CategoryElementsDialogListFragment) fragment;
 			getFragmentManager().beginTransaction().replace(R.id.rareplant_categroySurvey_containerB, categoryElementsFrag, 
 					CategoryElementsDialogListFragment.class.getName()).commit();
+			getFragmentManager().executePendingTransactions();
+			uiMutex.release();
 			saveButton.setVisible(true);
 			break;				
 		case ViewState.ADD:
@@ -255,8 +263,11 @@ public class CategorySurvey extends Activity {
 				(ElementsMultiSelectListDialogFragment) fragment;
 			getFragmentManager().beginTransaction().replace(R.id.rareplant_categroySurvey_containerB, elementsFrag, 
 					ElementsMultiSelectListDialogFragment.class.getName()).commit();
+			getFragmentManager().executePendingTransactions();
+			uiMutex.release();
 			saveButton.setVisible(false);
-			break;			
+			break;
+		default: uiMutex.release();
 		}
 		Toast.makeText(this, newState == ViewState.EDIT ? "Edit Mode" : "Add Mode", Toast.LENGTH_SHORT).show();
 	}
@@ -269,10 +280,26 @@ public class CategorySurvey extends Activity {
 	
 	private OnItemSelectedHandler<CategoryFragment.ViewModel> categorySelectedHandler = new OnItemSelectedHandler<CategoryFragment.ViewModel>() {
 		@Override
-		public void onItemSelected(ViewModel item) {
+		public void onItemSelected(CategoryFragment.ViewModel item) {
 			if(item != null) onCategorySelected(item);
 		}
-	};	
+	};
+
+	private OnItemSelectedHandler<CategoryFragment.ViewModel> categoryLongSelectHandler = new OnItemSelectedHandler<CategoryFragment.ViewModel>() {
+		@Override
+		public void onItemSelected(CategoryFragment.ViewModel item) {
+			//switch to Edit mode
+			if(viewState.getState() == ViewState.ADD){
+				uiMutex.acquireUninterruptibly();
+				addEdit.performClick();
+			}
+			try {
+				if (uiMutex.tryAcquire(4, TimeUnit.SECONDS)) onCategorySelected(item);
+			} catch (InterruptedException e) {
+				uiMutex.release();
+			}
+		}
+	};
 	
 	private void onCategorySelected(CategoryFragment.ViewModel viewModel){
 		Toast.makeText(this, viewModel.getCategoryName(), Toast.LENGTH_SHORT).show();
@@ -314,7 +341,7 @@ public class CategorySurvey extends Activity {
 	 * loads the station elements for the selected category
 	 * @param viewModel
 	 */
-	private void loadCategoryElements(CategoryFragment.ViewModel viewModel){		
+	private void loadCategoryElements(CategoryFragment.ViewModel viewModel){
 		Fragment fragment = getFragmentManager().findFragmentByTag(CategoryElementsDialogListFragment.class.getName());
 		if(fragment == null) return;
 		CategoryElementsDialogListFragment ceFragment = (CategoryElementsDialogListFragment) fragment;

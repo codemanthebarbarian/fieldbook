@@ -52,6 +52,7 @@ public class CategoryFragment extends Fragment implements ActionEvent.Listener {
 			v.setText(categoryViewModels[i].toString());
 			v.setTag(categoryViewModels[i]);
 			v.setOnClickListener(onCategroyClickHandeler);
+			v.setOnLongClickListener(onCategoryLongClickListener);
 			categoryButtons[i] = v;
 			container.addView(v);
 		}
@@ -125,6 +126,22 @@ public class CategoryFragment extends Fragment implements ActionEvent.Listener {
 	private OnItemSelectedHandler<ViewModel> categorySelectedHandler;
 	public void setOnCategorySelectedHandler(OnItemSelectedHandler<ViewModel> handler){
 		categorySelectedHandler = handler;
+	}
+
+	private View.OnLongClickListener onCategoryLongClickListener = new View.OnLongClickListener() {
+		@Override
+		public boolean onLongClick(View view) {
+			if(categoryLongClickHandler != null){
+				categoryLongClickHandler.onItemSelected((ViewModel) view.getTag());
+				return true;
+			}
+			return false;
+		}
+	};
+
+	private OnItemSelectedHandler<ViewModel> categoryLongClickHandler;
+	public void setOnCategoryLongClickSelectedHandler(OnItemSelectedHandler<ViewModel> handler){
+		categoryLongClickHandler = handler;
 	}
 	
 	public static class ViewModel extends com.amecfw.sage.proxy.ViewModelBaseEquatable{
