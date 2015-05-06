@@ -3,6 +3,7 @@ package com.amecfw.sage.vegetation.rareplant;
 import java.util.ArrayList;
 
 import com.amecfw.sage.model.EqualityComparatorOf;
+import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.ui.ElementsMultiSelectListAdapter;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.fieldbook.R;
@@ -41,7 +42,7 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 	
 	private void initialize(Bundle savedInstanceState){
 		elements = savedInstanceState.getParcelableArrayList(ARG_ELEMENTS);
-		adapter = new CategoryElementsListAdapter(getActivity(), elements, ElementsMultiSelectListAdapter.DISPLAY_COMMON_SCIENTIFIC);
+		adapter = new CategoryElementsListAdapter(getActivity(), elements, SageApplication.getInstance().getElementsMode());
 		adapter.setEditListener(editListener);
 		mIsDirty = savedInstanceState.getBoolean(ARG_IS_DIRTY, true);
 		dataSetChanged();
@@ -49,7 +50,7 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 	
 	private void initialize(){
 		if(elements == null) elements = new ArrayList<CategoryElementsListAdapter.ViewModel>();
-		adapter = new CategoryElementsListAdapter(getActivity(), elements, ElementsMultiSelectListAdapter.DISPLAY_COMMON_SCIENTIFIC);
+		adapter = new CategoryElementsListAdapter(getActivity(), elements, SageApplication.getInstance().getElementsMode());
 		adapter.setEditListener(editListener);
 		dataSetChanged();
 	}

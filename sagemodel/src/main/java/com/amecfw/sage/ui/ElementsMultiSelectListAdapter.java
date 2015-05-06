@@ -153,13 +153,43 @@ public class ElementsMultiSelectListAdapter extends ListAdapter<Element> impleme
 			ArrayList<Element> results = new ArrayList<Element>();
 			if (constraint != null) {
 				if (original != null && original.size() > 0) {
-					for (Element element : original) {
-						// check SCODE, scientific name and common name						
-						if (matches(element.getScode(), constraint) 
-								|| matches(element.getScientificName(), constraint)
-								|| matches(element.getCommonName(), constraint)) {
-							results.add(element);
-						}
+					// check SCODE, scientific name and common name
+					switch (displayMode){
+						case DISPLAY_SCIENTIFIC_COMMON:
+							for (Element element : original) {
+								if (matches(element.getScientificName(), constraint)
+										|| matches(element.getCommonName(), constraint))
+									results.add(element);
+							}
+							break;
+						case DISPLAY_COMMON_SCIENTIFIC:
+							for (Element element : original) {
+								if (matches(element.getCommonName(), constraint)
+										|| matches(element.getScientificName(), constraint))
+									results.add(element);
+							}
+							break;
+						case DISPLAY_SCODE_SCIENTIFIC:
+							for (Element element : original) {
+								if (matches(element.getScode(), constraint)
+										|| matches(element.getScientificName(), constraint))
+									results.add(element);
+							}
+							break;
+						case DISPLAY_SCODE_COMMON:
+							for (Element element : original) {
+								if (matches(element.getScode(), constraint)
+										|| matches(element.getCommonName(), constraint))
+									results.add(element);
+							}
+							break;
+						default:
+							for (Element element : original) {
+								if (matches(element.getScode(), constraint)
+										|| matches(element.getScientificName(), constraint)
+										|| matches(element.getCommonName(), constraint))
+									results.add(element);
+							}
 					}
 				}
 			}

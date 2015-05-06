@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/dayNightTheme"
-        android:title="@string/themeMode" 
+        android:title="@string/menuMainSettings"
         android:showAsAction="always|withText"/>
     <item android:id="@+id/fieldbook_databaseOptions"
         android:title="@string/fieldbook_mainMenuDBOptions"

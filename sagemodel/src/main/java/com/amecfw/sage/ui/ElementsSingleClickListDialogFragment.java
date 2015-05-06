@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.amecfw.sage.model.Element;
+import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.util.ActionEvent;
 import com.amecfw.sage.util.OnItemSelectedHandler;
 
@@ -35,7 +36,7 @@ public class ElementsSingleClickListDialogFragment  extends DialogFragment imple
 
     private void initialize(View view, Bundle args){
         if(elements == null) elements = new ArrayList<Element>();
-        adapter = new ElementsSingleClickListAdapter(getActivity(), elements, ElementsMultiSelectListAdapter.DISPLAY_COMMON_SCIENTIFIC);
+        adapter = new ElementsSingleClickListAdapter(getActivity(), elements, SageApplication.getInstance().getElementsMode());
         list = (ListView) view.findViewById(android.R.id.list);
         list.setAdapter(adapter);
         list.setOnItemClickListener(itemClickListener);

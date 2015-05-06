@@ -3,6 +3,7 @@
     <string name="defaultOwnerName">TABLET</string>
 
     <!-- menu -->
+    <string name="menuMainSettings">Settings</string>
     <string name="themeMode">Day/Night</string>
     <string name="fieldbook_mainMenuDBOptions">Manage Data</string>
 
