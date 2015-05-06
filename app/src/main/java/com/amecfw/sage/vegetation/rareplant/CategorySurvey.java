@@ -232,8 +232,10 @@ public class CategorySurvey extends Activity {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
+			uiMutex.acquireUninterruptibly();
 			if (isChecked) viewState.setStateEdit();
 			else viewState.setStateAdd();
+			uiMutex.release();
 		}		
 	};
 	
@@ -254,7 +256,7 @@ public class CategorySurvey extends Activity {
 			getFragmentManager().beginTransaction().replace(R.id.rareplant_categroySurvey_containerB, categoryElementsFrag, 
 					CategoryElementsDialogListFragment.class.getName()).commit();
 			getFragmentManager().executePendingTransactions();
-			uiMutex.release();
+			//uiMutex.release();
 			saveButton.setVisible(true);
 			break;				
 		case ViewState.ADD:
@@ -264,10 +266,10 @@ public class CategorySurvey extends Activity {
 			getFragmentManager().beginTransaction().replace(R.id.rareplant_categroySurvey_containerB, elementsFrag, 
 					ElementsMultiSelectListDialogFragment.class.getName()).commit();
 			getFragmentManager().executePendingTransactions();
-			uiMutex.release();
+			//uiMutex.release();
 			saveButton.setVisible(false);
 			break;
-		default: uiMutex.release();
+		//default: uiMutex.release();
 		}
 		Toast.makeText(this, newState == ViewState.EDIT ? "Edit Mode" : "Add Mode", Toast.LENGTH_SHORT).show();
 	}
@@ -290,11 +292,14 @@ public class CategorySurvey extends Activity {
 		public void onItemSelected(CategoryFragment.ViewModel item) {
 			//switch to Edit mode
 			if(viewState.getState() == ViewState.ADD){
-				uiMutex.acquireUninterruptibly();
+				//uiMutex.acquireUninterruptibly(); //lock the ui will be relaeased in onChangeMode
 				addEdit.performClick();
 			}
 			try {
-				if (uiMutex.tryAcquire(4, TimeUnit.SECONDS)) onCategorySelected(item);
+				if (uiMutex.tryAcquire(4, TimeUnit.SECONDS)){
+					onCategorySelected(item);
+					uiMutex.release();
+				}
 			} catch (InterruptedException e) {
 				uiMutex.release();
 			}
