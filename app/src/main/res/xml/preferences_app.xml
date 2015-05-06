@@ -6,5 +6,12 @@
         android:dialogTitle="@string/preferencesApp_themeDialogTitle"
         android:entries="@array/preferenceApp_themeEntries"
         android:entryValues="@array/preferencesApp_themeValues"
-        android:defaultValue="LIGHT"/>
+        android:defaultValue="@string/preferencesApp_themeDefault"/>
+    <ListPreference
+        android:key="@string/preferencesApp_elementModeKey"
+        android:title="@string/preferencesApp_elementModeTitle"
+        android:dialogTitle="@string/preferencesApp_elementModeDialogTitle"
+        android:entries="@array/preferencesApp_elementModeEntries"
+        android:entryValues="@array/preferencesApp_elementModeValues"
+        android:defaultValue="@string/preferencesApp_elementModeDefault"/>
 </PreferenceScreen>

@@ -21,6 +21,7 @@ import com.amecfw.sage.model.service.GpsLoggingService;
 import com.amecfw.sage.persistence.DaoMaster;
 import com.amecfw.sage.persistence.DaoSession;
 import com.amecfw.sage.persistence.DatabaseManager;
+import com.amecfw.sage.ui.ElementsMultiSelectListAdapter;
 import com.amecfw.sage.util.ApplicationCache;
 import com.amecfw.sage.util.ApplicationGps;
 
@@ -35,7 +36,6 @@ public class SageApplication implements ApplicationCache, ApplicationGps {
 	
 	private static SageApplication instance;
 	private Context context;
-	private int themeID;
 	private DaoMaster daoMaster;
 	private ServiceConnection gpsServiceConnection;
 	private Messenger gpsMessenger;
@@ -72,32 +72,67 @@ public class SageApplication implements ApplicationCache, ApplicationGps {
 	   	instance.setTheme();
 	   	PreferenceManager.getDefaultSharedPreferences(instance.context).registerOnSharedPreferenceChangeListener(instance.preferencesListener);
 	}
-	
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// Preferences
+
+	private SharedPreferences.OnSharedPreferenceChangeListener preferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {		
+		@Override
+		public void onSharedPreferenceChanged(
+				SharedPreferences sharedPreferences, String key) {
+			if(key.equals(context.getResources().getString(R.string.preferencesApp_themeKey))){
+				String theme = sharedPreferences.getString(key, SageApplication.THEME_LIGHT);
+				if(theme.equals(SageApplication.THEME_DARK)) themeID = R.style.AppTheme_Dark;
+				else themeID = R.style.AppTheme_Light;
+			} else if (key.equals(context.getResources().getString(R.string.preferencesApp_elementModeKey))){
+				setElementsMode(sharedPreferences.getString(key, null));
+			}
+		}
+	};
+
+	private int themeID;
+
+	public void setTheme(String value){
+		if(value.equals(THEME_DARK)) SageApplication.getInstance().setThemeID(R.style.AppTheme_Dark);
+		else SageApplication.getInstance().setThemeID(R.style.AppTheme_Light);
+	}
+
 	private void setTheme(){
 		String key = context.getResources().getString(R.string.preferencesApp_themeKey);
 		key = PreferenceManager.getDefaultSharedPreferences(context).getString(key, THEME_LIGHT);
 		setTheme(key);
 	}
-	private SharedPreferences.OnSharedPreferenceChangeListener preferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {		
-		@Override
-		public void onSharedPreferenceChanged(
-				SharedPreferences sharedPreferences, String key) {
-			if(key.equals( context.getResources().getString(R.string.preferencesApp_themeKey))){
-				String theme = sharedPreferences.getString(key, SageApplication.THEME_LIGHT);
-				if(theme.equals(SageApplication.THEME_DARK)) themeID = R.style.AppTheme_Dark;
-				else themeID = R.style.AppTheme_Light;
-			}			
-		}
-	};
-	
-	public void setTheme(String value){
-		if(value.equals(THEME_DARK)) SageApplication.getInstance().setThemeID(R.style.AppTheme_Dark);
-		else SageApplication.getInstance().setThemeID(R.style.AppTheme_Light);
-	}
-	
+
 	public void setThemeID(int themeID){
 		this.themeID = themeID;
 	}
+
+	private int elementsMode = 0;
+
+	public void setElementsMode(int mode){
+		if(mode < 1 || mode > 4) elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCIENTIFIC_COMMON;
+		else elementsMode = mode;
+	}
+
+	public void setElementsMode(String mode){
+		if(mode == null) elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCIENTIFIC_COMMON;
+		else if(mode.equalsIgnoreCase("DISPLAY_SCIENTIFIC_COMMON")) elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCIENTIFIC_COMMON;
+		else if(mode.equalsIgnoreCase("DISPLAY_COMMON_SCIENTIFIC")) elementsMode = ElementsMultiSelectListAdapter.DISPLAY_COMMON_SCIENTIFIC;
+		else if(mode.equalsIgnoreCase("DISPLAY_SCODE_COMMON")) elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCODE_COMMON;
+		else if(mode.equalsIgnoreCase("DISPLAY_SCODE_SCIENTIFIC")) elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCODE_SCIENTIFIC;
+		else elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCIENTIFIC_COMMON;
+	}
+
+	public int getElementsMode(){
+		if(elementsMode < 1){
+			String key = context.getResources().getString(R.string.preferencesApp_elementModeKey);
+			setElementsMode(PreferenceManager.getDefaultSharedPreferences(context).getString(key, null));
+		}
+		return elementsMode;
+	}
+
+	// END Preferences
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public static synchronized void dispose(){
 		instance.context.unbindService(instance.gpsServiceConnection);

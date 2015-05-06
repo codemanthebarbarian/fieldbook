@@ -54,6 +54,7 @@
     <string name="preferencesApp_themeTitle">Theme</string>
     <string name="preferencesApp_themeDialogTitle">Theme</string>
     <string name="preferencesApp_themeKey">appPreference_theme</string>
+    <string name="preferencesApp_themeDefault">LIGHT</string>
     <string-array name="preferenceApp_themeEntries">
         <item>Light</item>
         <item>Dark</item>
@@ -61,5 +62,21 @@
     <string-array name="preferencesApp_themeValues">
         <item>LIGHT</item>
         <item>DARK</item>
+    </string-array>
+    <string name="preferencesApp_elementModeTitle">Plant Elements View Mode</string>
+    <string name="preferencesApp_elementModeDialogTitle">Plant Elements View Mode</string>
+    <string name="preferencesApp_elementModeKey">appPreferences_elementsView</string>
+    <string name="preferencesApp_elementModeDefault">DISPLAY_SCIENTIFIC_COMMON</string>
+    <string-array name="preferencesApp_elementModeEntries">
+        <item>Scode - Scientific Name</item>
+        <item>Scode - Common Name</item>
+        <item>Scientific Name - Common Name</item>
+        <item>Common Name - Scientific Name</item>
+    </string-array>
+    <string-array name="preferencesApp_elementModeValues">
+        <item>DISPLAY_SCODE_SCIENTIFIC</item>
+        <item>DISPLAY_SCODE_COMMON</item>
+        <item>DISPLAY_SCIENTIFIC_COMMON</item>
+        <item>DISPLAY_COMMON_SCIENTIFIC</item>
     </string-array>
 </resources>

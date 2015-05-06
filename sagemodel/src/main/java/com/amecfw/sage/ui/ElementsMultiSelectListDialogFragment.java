@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.amecfw.sage.model.Element;
+import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.util.ActionEvent;
 import com.amecfw.sage.util.OnItemSelectedHandler;
 
@@ -42,7 +43,7 @@ public class ElementsMultiSelectListDialogFragment extends DialogFragment implem
 			choiceMode = args.getInt(ARG_CHOICE_MODE, AbsListView.CHOICE_MODE_MULTIPLE);
 		}
 		if(elements == null) elements = new ArrayList<Element>();
-		adapter = new ElementsMultiSelectListAdapter(getActivity(), elements, ElementsMultiSelectListAdapter.DISPLAY_COMMON_SCIENTIFIC);
+		adapter = new ElementsMultiSelectListAdapter(getActivity(), elements, SageApplication.getInstance().getElementsMode());
 		adapter.setOnItemClickListener(itemClickListener); // adapter contains a clickable view so manually listen for click events
 		list = (ListView) view.findViewById(android.R.id.list);
 		list.setChoiceMode(choiceMode);
