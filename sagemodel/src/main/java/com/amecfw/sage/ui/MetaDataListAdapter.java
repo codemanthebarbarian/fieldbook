@@ -161,7 +161,7 @@ public class MetaDataListAdapter extends ListAdapter<MetaDataListDialogFragment.
 		MetaDataListDialogFragment.ViewModel element = items.get(index);
 		element.name = name;
 		mIsDirty = true;
-		onEdit(element, null);
+		onEdit();
 	}
 	
 	private OnFocusChangeListener valueFocusChangeListener = new OnFocusChangeListener() {	
@@ -192,10 +192,13 @@ public class MetaDataListAdapter extends ListAdapter<MetaDataListDialogFragment.
 		MetaDataListDialogFragment.ViewModel element = items.get(index);
 		element.value = value;
 		mIsDirty = true;
-		onEdit(element, null);
+		onEdit();
 	}
 	
-	private void onEdit(MetaDataListDialogFragment.ViewModel element, ViewState viewState) { if(editListener != null) editListener.onEdit(element, viewState); }
+	private void onEdit() {
+
+		if(editListener != null) editListener.onDirty();
+	}
 	private OnEditListener<MetaDataListDialogFragment.ViewModel> editListener;
 	/**
 	 * Set the edit listener
