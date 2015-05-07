@@ -128,6 +128,8 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 	
 	private void doAdd(){
 		Fragment f = getFragmentManager().findFragmentByTag(StationEditFragment.class.getName());
+		//TODO: make sure there are no unsaved changes
+		stationProxy = null;
 		if(f== null){
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			StationEditFragment editFragment = new StationEditFragment();
