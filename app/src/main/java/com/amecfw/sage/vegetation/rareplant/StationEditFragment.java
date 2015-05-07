@@ -520,20 +520,14 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 	private void onEdit(){
 		if(notify && ! _isDirty) {
 			_isDirty = true;
-			if (onEditListener != null) onEditListener.onDirty();
 		}
 	}
 
 	private void onSave(){
 		if(_isDirty) {
 			_isDirty = false;
-			if (onEditListener != null) onEditListener.onSave();
 		}
 	}
-
-	private com.amecfw.sage.util.OnEditListener onEditListener;
-
-	public void setOnEditListener(com.amecfw.sage.util.OnEditListener onEditListener){ this.onEditListener = onEditListener; }
 
 	private TextWatcher textWatcher = new TextWatcher() {
 		@Override
