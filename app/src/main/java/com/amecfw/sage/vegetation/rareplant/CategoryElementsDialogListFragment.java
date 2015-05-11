@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.amecfw.sage.model.EqualityComparatorOf;
 import com.amecfw.sage.model.SageApplication;
-import com.amecfw.sage.ui.ElementsMultiSelectListAdapter;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.fieldbook.R;
 import com.amecfw.sage.vegetation.rareplant.CategoryElementsListAdapter.ViewModel;
@@ -49,7 +48,7 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 	}
 	
 	private void initialize(){
-		if(elements == null) elements = new ArrayList<CategoryElementsListAdapter.ViewModel>();
+		if(elements == null) elements = new ArrayList<>();
 		adapter = new CategoryElementsListAdapter(getActivity(), elements, SageApplication.getInstance().getElementsMode());
 		adapter.setEditListener(editListener);
 		dataSetChanged();
@@ -69,8 +68,8 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 		super.onDetach();
 	}
 
-	public void setCategoryElements(ArrayList<CategoryElementsListAdapter.ViewModel> categoryElements){
-		elements = categoryElements == null ? elements = new ArrayList<CategoryElementsListAdapter.ViewModel>() : categoryElements;
+	public void setCategoryElements(ArrayList<ViewModel> categoryElements){
+		elements = categoryElements == null ? elements = new ArrayList<>() : categoryElements;
 		if(adapter != null)	adapter.setItems(categoryElements);
 		mIsDirty = false;
 		dataSetChanged();
@@ -100,7 +99,7 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 	/**
 	 * Responds to ActionEvent.SAVE, all other events are ignored
 	 * Save will call OnExitLister.onExit method with a list of elements and a null ViewState
-	 * @param e
+	 * @param e the action event
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -143,48 +142,15 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 		dataSetChanged();
 	}
 
-	public ArrayList<CategoryElementsListAdapter.ViewModel> getCategoryElements() { return elements; }
+	public ArrayList<ViewModel> getCategoryElements() { return elements; }
 	
-	private OnExitListener<ArrayList<CategoryElementsListAdapter.ViewModel>> exitListener;
+	private OnExitListener<ArrayList<ViewModel>> exitListener;
 	/**
 	 * Sets the OnExitListener for the Fragment. The exit listener is called when responding to the 
 	 * ActionEvent.SAVE event
 	 * @param exitListener
 	 */
-	public void setOnExitListener(OnExitListener<ArrayList<CategoryElementsListAdapter.ViewModel>> exitListener){
+	public void setOnExitListener(OnExitListener<ArrayList<ViewModel>> exitListener){
 		this.exitListener = exitListener;
-	}
-	
-	public static class ViewModelComparator implements EqualityComparatorOf<CategoryElementsListAdapter.ViewModel>{
-		@Override
-		public boolean equalsTo(Object objA, Object objB) {
-			if(objA == null || objB == null) return false;
-			if(!(objA instanceof CategoryElementsListAdapter.ViewModel)
-					|| !(objB instanceof CategoryElementsListAdapter.ViewModel)) return false;
-			CategoryElementsListAdapter.ViewModel a = (CategoryElementsListAdapter.ViewModel) objA;
-			CategoryElementsListAdapter.ViewModel b = (CategoryElementsListAdapter.ViewModel) objB;
-			return equals(a, b);
-		}
-
-		@Override
-		public int getHashCode(Object obj) {
-			if(obj == null) return 0;
-			if(!(obj instanceof CategoryElementsListAdapter.ViewModel)) return 0;
-			return getHash((CategoryElementsListAdapter.ViewModel) obj);
-		}
-
-		@Override
-		public boolean equals(
-				com.amecfw.sage.vegetation.rareplant.CategoryElementsListAdapter.ViewModel a,
-				com.amecfw.sage.vegetation.rareplant.CategoryElementsListAdapter.ViewModel b) {
-			return a.getElementId() == b.getElementId();
-		}
-
-		@Override
-		public int getHash(
-				com.amecfw.sage.vegetation.rareplant.CategoryElementsListAdapter.ViewModel obj) {
-			return (int) obj.getElementId();
-		}
-		
 	}
 }

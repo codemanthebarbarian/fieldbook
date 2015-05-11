@@ -42,5 +42,22 @@
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:hint="@string/hello_world"
         android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+    <ImageButton
+        android:id="@+id/category_elementView_locationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/category_elementView_cover"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="Select Location"
+        android:src="@android:drawable/ic_menu_mylocation" />
+    <TextView
+        android:id="@+id/category_elementView_coordinateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/category_elementView_locationButton"
+        android:layout_toStartOf="@id/category_elementView_locationButton"
+        android:layout_alignParentStart="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/notAvailable_na"/>
 </RelativeLayout>
  

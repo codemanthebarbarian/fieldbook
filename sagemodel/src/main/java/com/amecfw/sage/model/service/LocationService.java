@@ -10,6 +10,8 @@ import com.amecfw.sage.model.Coordinate;
 import com.amecfw.sage.model.EqualityComparator;
 import com.amecfw.sage.model.EqualityComparatorOf;
 import com.amecfw.sage.model.Location;
+import com.amecfw.sage.model.R;
+import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.model.Site;
 import com.amecfw.sage.persistence.CoordinateDao;
 import com.amecfw.sage.persistence.DaoSession;
@@ -37,7 +39,7 @@ public class LocationService {
 	/**
 	 * returns all the locations for the provided site or null if no locations exist for the site. The site must
 	 * exist in the database (have an id > 0) or null is returned.
-	 * @param projectSite
+	 * @param site the site to find the location for
 	 * @return the list of locations for the site or null if none exist or the site id is < 1
 	 */
 	public List<Location> findLocation(Site site){
@@ -300,6 +302,24 @@ public class LocationService {
 	
 	// END Coordinate methods
 	///////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * formats a location based on Lat: %f Long: %f Elev: %f Acc: %f
+	 * @param location the location
+	 * @return the fomatted text of null if the location is null
+	 */
+	public static String formatLocationText(android.location.Location location){
+		String result = null;
+		if(location != null) {
+			String format = SageApplication.getInstance().getContext().getString(R.string.gps_format);
+			result = String.format(format
+					, location.getLatitude()
+					, location.getLongitude()
+					, location.getAltitude()
+					, location.getAccuracy());
+		}
+		return result;
+	}
 	
 	/**
 	 * Converts the provided coordinate to an android.location.Location
