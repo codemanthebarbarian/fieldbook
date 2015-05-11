@@ -124,11 +124,9 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	private void doAdd(){
+
+	private void showAdd(){
 		Fragment f = getFragmentManager().findFragmentByTag(StationEditFragment.class.getName());
-		//TODO: make sure there are no unsaved changes
-		if(isDirty());
 		stationProxy = null;
 		if(f== null){
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -139,8 +137,17 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 			transaction.commit();
 			saveBtn.setVisible(true);
 		}
-		else ((StationEditFragment)f).setViewModel(new StationEditFragment.ViewModel());
-	  viewState.setStateAdd();
+		else {
+			Bundle args = new Bundle();
+			args.putInt(ActionEvent.ARG_COMMAND, StationEditFragment.COMMAND_NOTIFY_NEW);
+			((StationEditFragment) f).actionPerformed(ActionEvent.getActionDoCommand(args));
+		}
+		viewState.setStateAdd();
+	}
+	
+	private void doAdd(){
+		if(isDirty()) displayAddNewCancelSaveDialog();
+		else showAdd();
 	}
 	
 	private void doSave(){
@@ -262,9 +269,33 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 		}
 	}
 
+	private CancelSaveExitDialog.Listener addCancelSaveExitListener = new CancelSaveExitDialog.Listener(){
+		@Override
+		public void onCancel(CancelSaveExitDialog dialog) {
+			//Do nothing, just close the dialog
+		}
+
+		@Override
+		public void onSave(CancelSaveExitDialog dialog) {
+			doSave();
+			showAdd();
+		}
+
+		@Override
+		public void onExit(CancelSaveExitDialog dialog) {
+			showAdd();
+		}
+	};
+
+	private void displayAddNewCancelSaveDialog(){
+		CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+		dialog.setListener(addCancelSaveExitListener);
+		dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
+	}
+
 	private boolean exit = false;
 	private boolean cancel = false;
-	private CancelSaveExitDialog.Listener cancelSaveExitDialogListener = new CancelSaveExitDialog.Listener() {		
+	private CancelSaveExitDialog.Listener exitCancelSaveExitDialogListener = new CancelSaveExitDialog.Listener() {
 		@Override
 		public void onSave(CancelSaveExitDialog dialog) {
 			doSave();
@@ -282,7 +313,8 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 	};
 
 	private void dispalyCancelSaveDialog(){
-		CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
+		CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+		dialog.setListener(exitCancelSaveExitDialogListener);
 		dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
 	}
 

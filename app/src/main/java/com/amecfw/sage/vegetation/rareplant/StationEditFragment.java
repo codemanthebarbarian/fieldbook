@@ -219,11 +219,16 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 	public static final int COMMAND_EDIT = ViewState.EDIT;
 	/** notify save command, notifies that the viewmodel has been saved to the database and sets dirty to false */
 	public static final int COMMAND_NOTIFY_SAVE = ViewState.VIEW;
+	/** refresh the form to create a new station */
+	public static final int COMMAND_NOTIFY_NEW = ViewState.ADD;
 
 	/**
 	 * Responds to the ActionEvent.Exit by returning the viewmodel
 	 * Responds to the ActionEvent.Save by returning the viewmodel (Same as ActionEvent.EXIT)
 	 * Responds to the ActionEvent.DO_COMMAND with a COMMAND_EDIT flag, args must contain a viewmodel for editing
+	 * Responds to the ActionEvent.DO_COMMAND with a COMMAND_NOTIFY_SAVE flag, notify of a save and set dirty to false
+	 * Responds to the ActionEvent.DO_COMMAND with a COMMAND_NOTIFY_NEW flag, args can contain a new viewmodel as template
+	 * this will use the current date and time
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e){
@@ -242,6 +247,13 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 			case COMMAND_NOTIFY_SAVE:
 				_isDirty = false;
 				break;
+			case COMMAND_NOTIFY_NEW:
+				ViewModel vm = args.getParcelable(ARG_VIEW_MODEL);
+				setViewModel(vm == null ? new ViewModel() : vm);
+				Calendar now = Calendar.getInstance();
+				setDateCollected(now);
+				setTimeCollected(now);
+				_isDirty = false;
 			}
 		}
 	}

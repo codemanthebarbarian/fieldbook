@@ -191,7 +191,8 @@ public class PhotoActivity extends Activity {
 			exit = false;
 			super.onBackPressed();
 		} else if(isDirty){
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
+			CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+			dialog.setListener(cancelSaveExitDialogListener);
 			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
 		} else super.onBackPressed();
 	}
@@ -202,7 +203,8 @@ public class PhotoActivity extends Activity {
 			exit = false;
 		}
 		else if(isDirty) {
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
+			CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+			dialog.setListener(cancelSaveExitDialogListener);
 			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
 			return false;
 		} 
