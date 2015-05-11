@@ -1,17 +1,17 @@
 package com.amecfw.sage.util;
 
 /**
- * An interface to identify listeners for fragments/dialogs that use ViewModels.
- * When the fragment is closed, the ViewModel will be passed back to the host with the associated
- * ViewState
- *
- * @param <T> the type of object to return
+ * An interface to communicate the state of a mutable object
  */
 public interface OnEditListener<T> {
+
 	/**
-	 * The fragment or dialog has exited under the provided ViewState and the ViewModel 
-	 * @param viewModel the current ViewModel for the fragment or dialog
-	 * @param viewState the current ViewState
+	 * raised the first time an object has been mutated and placed in a dirty state
 	 */
-	public void onEdit(T object, ViewState viewState);
+	public void onDirty();
+
+	/**
+	 * raised when the object's state has been persisted (no longer dirty)
+	 */
+	public void onSave();
 }

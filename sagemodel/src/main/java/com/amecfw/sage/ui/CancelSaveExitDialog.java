@@ -11,8 +11,13 @@ import android.os.Bundle;
 public class CancelSaveExitDialog extends DialogFragment {
 	
 	private Listener listener;
-	
-	public CancelSaveExitDialog(Listener listener){
+
+	/**
+	 * Don't forget to set the listener!!
+	 */
+	public CancelSaveExitDialog(){	}
+
+	public void setListener(Listener listener){
 		this.listener = listener;
 	}
 

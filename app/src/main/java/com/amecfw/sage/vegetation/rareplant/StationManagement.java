@@ -19,7 +19,6 @@ import com.amecfw.sage.model.service.PhotoService;
 import com.amecfw.sage.model.service.ProjectSiteServices;
 import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.persistence.DaoSession;
-import com.amecfw.sage.proxy.LocationProxy;
 import com.amecfw.sage.proxy.PhotoProxy;
 import com.amecfw.sage.proxy.StationProxy;
 
@@ -30,7 +29,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 public class StationManagement extends Activity implements ViewState.ViewStateListener, StationListFragment.OnItemSelectedHandler {
 	
@@ -38,6 +36,7 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 	private static final String ARG_PROXY = "vegetation.rareplant.StationManagement.proxy";
 	private static final String ARG_CONTAINER_STATE = "vegetation.rareplant.StationManagement.containerState";
 	private static final String ARG_VIEW_STATE = "vegetation.rareplant.StationManagement.viewState";
+	private static final String ARG_IS_DIRTY = "vegetation.rareplant.StationManagement.isDirty";
 	
 	private static final int CONTAINER_STATE_ONE = 1;
 	private static final int CONTAINER_STATE_TWO = 2;
@@ -125,9 +124,10 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	private void doAdd(){
+
+	private void showAdd(){
 		Fragment f = getFragmentManager().findFragmentByTag(StationEditFragment.class.getName());
+		stationProxy = null;
 		if(f== null){
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			StationEditFragment editFragment = new StationEditFragment();
@@ -137,8 +137,17 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 			transaction.commit();
 			saveBtn.setVisible(true);
 		}
-		else ((StationEditFragment)f).setViewModel(new StationEditFragment.ViewModel());
-	  viewState.setStateAdd();
+		else {
+			Bundle args = new Bundle();
+			args.putInt(ActionEvent.ARG_COMMAND, StationEditFragment.COMMAND_NOTIFY_NEW);
+			((StationEditFragment) f).actionPerformed(ActionEvent.getActionDoCommand(args));
+		}
+		viewState.setStateAdd();
+	}
+	
+	private void doAdd(){
+		if(isDirty()) displayAddNewCancelSaveDialog();
+		else showAdd();
 	}
 	
 	private void doSave(){
@@ -176,16 +185,6 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 		}
 	}
 	
-	private void doCancel(){
-		Fragment f = getFragmentManager().findFragmentByTag(StationEditFragment.class.getName());
-		if(f != null){
-			PhotoService.clearTemp(((StationEditFragment)f).getPhotos());
-		}
-		if(stationProxy != null){
-			PhotoService.clearTemp(stationProxy.getPhotos());
-		}
-	}
-	
 	private com.amecfw.sage.util.OnItemSelectedHandler<Station> stationLongClickSelectedHandler = new com.amecfw.sage.util.OnItemSelectedHandler<Station>(){
 		@Override
 		public void onItemSelected(Station item) {
@@ -213,7 +212,8 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 			transaction.commit();
 		}else{
 			StationEditFragment editFragment = (StationEditFragment) f;
-			if(editFragment.isDirty()) ;//TODO: should prompt user to save changes
+			if(isDirty());//TODO: should prompt user to save changes
+			if(cancel) return;
 			args.putInt(ActionEvent.ARG_COMMAND, StationEditFragment.COMMAND_EDIT);
 			editFragment.actionPerformed(ActionEvent.getActionDoCommand(args));
 			editFragment.setPhotos(stationProxy.getPhotos());
@@ -224,9 +224,7 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 	private void updateStationList(){
 		stations = new StationService(SageApplication.getInstance().getDaoSession()).find(projectSite, VegetationGlobals.SURVEY_RARE_PLANT);
 		Fragment f = getFragmentManager().findFragmentByTag( StationListFragment.class.getName());
-		if(f != null){
-			((StationListFragment) f).setStations(stations);
-		}
+		if(f != null) ((StationListFragment) f).setStations(stations);
 	}
 
 	@Override
@@ -254,47 +252,93 @@ public class StationManagement extends Activity implements ViewState.ViewStateLi
 		intent.putExtra(CategorySurvey.ARG_STATION, CategorySurvey.ARG_STATION);
 		startActivity(intent);
 	}
-	
+
 	private boolean isDirty(){
 		Fragment f = getFragmentManager().findFragmentByTag(StationEditFragment.class.getName());
-		if(f != null){
-			return ((StationEditFragment)f).isDirty();
-		} else return false;
+		if(f == null) return false;
+		return ((StationEditFragment)f).isDirty();
 	}
+
+	private void doCancel(){
+		Fragment f = getFragmentManager().findFragmentByTag(StationEditFragment.class.getName());
+		if(f != null){
+			PhotoService.clearTemp(((StationEditFragment)f).getPhotos());
+		}
+		if(stationProxy != null){
+			PhotoService.clearTemp(stationProxy.getPhotos());
+		}
+	}
+
+	private CancelSaveExitDialog.Listener addCancelSaveExitListener = new CancelSaveExitDialog.Listener(){
+		@Override
+		public void onCancel(CancelSaveExitDialog dialog) {
+			//Do nothing, just close the dialog
+		}
+
+		@Override
+		public void onSave(CancelSaveExitDialog dialog) {
+			doSave();
+			showAdd();
+		}
+
+		@Override
+		public void onExit(CancelSaveExitDialog dialog) {
+			showAdd();
+		}
+	};
+
+	private void displayAddNewCancelSaveDialog(){
+		CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+		dialog.setListener(addCancelSaveExitListener);
+		dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
+	}
+
 	private boolean exit = false;
-	private CancelSaveExitDialog.Listener cancelSaveExitDialogListener = new CancelSaveExitDialog.Listener() {		
+	private boolean cancel = false;
+	private CancelSaveExitDialog.Listener exitCancelSaveExitDialogListener = new CancelSaveExitDialog.Listener() {
 		@Override
 		public void onSave(CancelSaveExitDialog dialog) {
 			doSave();
 		}		
 		@Override
 		public void onExit(CancelSaveExitDialog dialog) {
-			doCancel();		
+			doCancel();
+			exit = true;
+			onNavigateUp();
 		}		
 		@Override
-		public void onCancel(CancelSaveExitDialog dialog) { 
-			//do nothing, just dismiss the dialog
+		public void onCancel(CancelSaveExitDialog dialog) {
+			cancel = true;
 		}
 	};
+
+	private void dispalyCancelSaveDialog(){
+		CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+		dialog.setListener(exitCancelSaveExitDialogListener);
+		dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
+	}
+
 	@Override
 	public void onBackPressed() {
-		if(exit){
-			exit = false;
+		if(cancel){
+			cancel = false;
+			super.onBackPressed();
+		} else if (exit){
 			super.onBackPressed();
 		} else if(isDirty()){
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
-			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
+			dispalyCancelSaveDialog();
 		} else super.onBackPressed();
 	}
 
 	@Override
 	public boolean onNavigateUp() {
-		if(exit){
-			exit = false;
-		}
-		else if(isDirty()) {
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
-			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
+		if(cancel){
+			cancel = false;
+			return true;
+		} else if(exit){
+			return super.onNavigateUp();
+		} else if(isDirty()) {
+			dispalyCancelSaveDialog();
 			return false;
 		} 
 		return super.onNavigateUp();

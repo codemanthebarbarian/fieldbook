@@ -440,7 +440,8 @@ public class CategorySurvey extends Activity {
 			exit = false;
 			super.onBackPressed();
 		} else if(isDirty){
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
+			CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+			dialog.setListener(cancelSaveExitDialogListener);
 			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
 		} else if (viewState.getState() == ViewState.EDIT){
 			addEdit.performClick();
@@ -453,7 +454,8 @@ public class CategorySurvey extends Activity {
 			exit = false;
 		}
 		else if(isDirty) {
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
+			CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+			dialog.setListener(cancelSaveExitDialogListener);
 			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
 			return false;
 		}

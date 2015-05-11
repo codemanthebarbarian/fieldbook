@@ -146,7 +146,8 @@ public class GroupObservationManagement extends Activity implements ObservationG
 		if(viewStack.size() < 2) super.onBackPressed();//At view start so close the activity
 		else{
 			//no special case, pop stack and back to previous state
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
+			CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+			dialog.setListener(cancelSaveExitDialogListener);
 			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
 		}
 	}
@@ -157,7 +158,8 @@ public class GroupObservationManagement extends Activity implements ObservationG
 			super.onBackPressed();
 			return true;
 		}else{
-			CancelSaveExitDialog dialog = new CancelSaveExitDialog(cancelSaveExitDialogListener);
+			CancelSaveExitDialog dialog = new CancelSaveExitDialog();
+			dialog.setListener(cancelSaveExitDialogListener);
 			dialog.show(getFragmentManager(), CancelSaveExitDialog.class.getName());
 			return false;
 		}

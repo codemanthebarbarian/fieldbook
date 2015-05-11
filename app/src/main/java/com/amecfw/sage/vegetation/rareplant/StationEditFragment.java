@@ -39,6 +39,8 @@ import android.os.Messenger;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,27 +75,33 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 	private Date timeCreatedStamp;
 	private TimeZone timeZone;
 	private List<PhotoProxy> photos;
-	private boolean _isDirty;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		notify = false;
 		View view = inflater.inflate(R.layout.rareplant_station_edit, container, false);
  		stationName = (EditText) view.findViewById(R.id.rareplant_stationEdit_stationName);
+		stationName.addTextChangedListener(textWatcher);
 		fieldLead = (ImageButton)view.findViewById(R.id.rareplant_stationEdit_FieldLeadimageButton);
 		fieldLead.setOnClickListener(fieldLeadListener);
 		fieldLeadTextField = (EditText)view.findViewById(R.id.rareplant_stationEdit_FieldLead);
+		fieldLeadTextField.addTextChangedListener(textWatcher);
 		fieldCrew = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_FieldCrewimageButton);
 		fieldCrew.setOnClickListener(fieldCrewListener);
 		fieldCrewTextField = (EditText)view.findViewById(R.id.rareplant_stationEdit_FieldCrew);
+		fieldCrewTextField.addTextChangedListener(textWatcher);
 		ecoSite = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_EcoSiteimageButton);
 		ecoSite.setOnClickListener(ecoSiteListener);
 		ecoSiteTextField = (EditText) view.findViewById(R.id.rareplant_stationEdit_EcoSite);
+		ecoSiteTextField.addTextChangedListener(textWatcher);
 		coordinateText = (TextView) view.findViewById(R.id.rareplant_stationEdit_coordinateText);
 		setDateTime = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_setDateTime);
 		setDateTime.setOnClickListener(setDateTimeListener);
 		comments = (EditText) view.findViewById(R.id.rareplant_stationEdit_comments);
+		comments.addTextChangedListener(textWatcher);
 		dateTimeCollected = (TextView) view.findViewById(R.id.rareplant_stationEdit_dateTimeCollected);
+		dateTimeCollected.addTextChangedListener(textWatcher);
 		initialize(savedInstanceState == null ? getArguments() : savedInstanceState);
 		isWaitingForGpsResponse = false;
 		gpsMessenger = SageApplication.getInstance().getGpsMessenger();
@@ -101,6 +109,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 		getLocation.setOnClickListener(gpsButtonClickListener);
 		getPhoto = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_takePhoto);
 		getPhoto.setOnClickListener(photoListener);
+		notify = true;
 		return view;
 	}
 	
@@ -148,7 +157,11 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 	}
 	
 	public void setViewModel(ViewModel viewModel){
-		if(viewModel == null) return;
+		notify = false;
+		if(viewModel == null){
+			notify = true;
+			return;
+		}
 		stationName.setText(viewModel.stationName);
 		fieldLeadTextField.setText(viewModel.fieldLead);
 		fieldCrewTextField.setText(viewModel.fieldCrew);
@@ -160,6 +173,8 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 		setDateTimeCollected();
 		location = viewModel.location;
 		updateLocationText(location);
+		_isDirty = false;
+		notify = true;
 	}
 	
 	public ViewModel getViewModel(){
@@ -177,6 +192,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 	}
 	
 	public void setPhotos(List<PhotoProxy> photos){
+		notify = false;
 		this.photos = photos;
 		if(getFragmentManager() == null) return;
 		Fragment f = getFragmentManager().findFragmentByTag(PhotoHorizontalListFragment.class.getName());
@@ -184,11 +200,10 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 			PhotoHorizontalListFragment photoFrag = (PhotoHorizontalListFragment) f;
 			photoFrag.setProxies(this.photos);
 		}
+		notify = true;
 	}
 	
 	public List<PhotoProxy> getPhotos() { return photos; }
-	
-	public boolean isDirty() { return _isDirty; }
 	
 	private void onExit(){
 		if(exitListener == null) return;
@@ -202,8 +217,18 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 	
 	/** edit command - same as ViewState.EDIT provide the ViewModel to edit in the command bundle ARG_VIEW_MODEL */
 	public static final int COMMAND_EDIT = ViewState.EDIT;
+	/** notify save command, notifies that the viewmodel has been saved to the database and sets dirty to false */
+	public static final int COMMAND_NOTIFY_SAVE = ViewState.VIEW;
+	/** refresh the form to create a new station */
+	public static final int COMMAND_NOTIFY_NEW = ViewState.ADD;
+
 	/**
-	 * 
+	 * Responds to the ActionEvent.Exit by returning the viewmodel
+	 * Responds to the ActionEvent.Save by returning the viewmodel (Same as ActionEvent.EXIT)
+	 * Responds to the ActionEvent.DO_COMMAND with a COMMAND_EDIT flag, args must contain a viewmodel for editing
+	 * Responds to the ActionEvent.DO_COMMAND with a COMMAND_NOTIFY_SAVE flag, notify of a save and set dirty to false
+	 * Responds to the ActionEvent.DO_COMMAND with a COMMAND_NOTIFY_NEW flag, args can contain a new viewmodel as template
+	 * this will use the current date and time
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e){
@@ -219,8 +244,17 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 			case COMMAND_EDIT:
 				doEdit(args);
 				break;
+			case COMMAND_NOTIFY_SAVE:
+				_isDirty = false;
+				break;
+			case COMMAND_NOTIFY_NEW:
+				ViewModel vm = args.getParcelable(ARG_VIEW_MODEL);
+				setViewModel(vm == null ? new ViewModel() : vm);
+				Calendar now = Calendar.getInstance();
+				setDateCollected(now);
+				setTimeCollected(now);
+				_isDirty = false;
 			}
-			break;
 		}
 	}
 	
@@ -279,6 +313,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 						setMessageText("GPS UNAVAILABLE");
 					else {
 						updateLocationText(location);
+						onEdit();
 					}
 				}
 			} catch (Exception e) {
@@ -357,8 +392,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 			setTimeCollected(now);
 		}
 	};
-	
-	
+
 	private void setDateTimeCollected(){
 		String date = dateCreatedStamp == null ? "-" : DateFormat.getDateInstance(DateFormat.LONG).format(dateCreatedStamp);
 		String time = timeCreatedStamp == null ? "" : DateFormat.getTimeInstance(DateFormat.LONG).format(timeCreatedStamp);
@@ -403,7 +437,6 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 			if(resultCode == Activity.RESULT_OK){
 				PhotoProxy photoProxy = SageApplication.getInstance().removeItem(data.getExtras().getString(PhotoActivity.ARG_VIEW_PROXY_CACHE_KEY));
 				if(photoProxy != null) addPhoto(photoProxy);
-				_isDirty = true;
 			}
 			if(resultCode == Activity.RESULT_CANCELED){
 				Toast.makeText(getActivity(), "Photo Canceled by User", Toast.LENGTH_SHORT).show();
@@ -414,6 +447,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 	private void addPhoto(PhotoProxy proxy){
 		if(photos == null) photos = new ArrayList<PhotoProxy>();
 		photos.add(proxy);
+		onEdit();
 		Fragment fragment = getFragmentManager().findFragmentByTag(PhotoHorizontalListFragment.class.getName());
 		if(fragment != null) {
 			((PhotoHorizontalListFragment)fragment).setProxies(photos);
@@ -458,7 +492,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 				
 				@Override
 				public void onExit(String viewModel, ViewState viewState) {
-					fieldCrewTextField.setText(viewModel);	
+					fieldCrewTextField.setText(viewModel);
 				}
 			});
 			dialog.show(getFragmentManager(), null);
@@ -487,6 +521,41 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 			dialog.show(getFragmentManager(), null);
 		}
 	};
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// OnEdit methods
+
+	private boolean _isDirty;
+	private boolean notify; //a flag for the textWater to notify
+	public boolean isDirty() { return _isDirty; }
+
+	private void onEdit(){
+		if(notify && ! _isDirty) {
+			_isDirty = true;
+		}
+	}
+
+	private void onSave(){
+		if(_isDirty) {
+			_isDirty = false;
+		}
+	}
+
+	private TextWatcher textWatcher = new TextWatcher() {
+		@Override
+		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+		@Override
+		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+		@Override
+		public void afterTextChanged(Editable editable) {
+			onEdit();
+		}
+	};
+
+	// End OnEdit methods
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
 	public static class ViewModel implements com.amecfw.sage.proxy.ViewModel {
