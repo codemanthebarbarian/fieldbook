@@ -63,7 +63,21 @@ public class CategorySurveyService {
 			StationElementProxy temp = CollectionOperations.find(fromVM, proxy, comparator);
 			proxy.getModel().setCount(temp.getModel().getCount());
 			MetaDataService.MetaSupportExtensionMethods.replace(proxy.getModel(), temp.getModel());
-			//TODO: deal with photos and locations eventually
+			updateLocationProxy(proxy, temp);
+			//TODO: deal with photos
+		}
+	}
+
+	private static void updateLocationProxy(StationElementProxy destination, StationElementProxy source){
+		if(destination.getLocation() == null && source.getLocation() == null) return;
+		else if(destination.getLocation() == null){
+			destination.setLocation(source.getLocation());
+			if(destination.getModel().getRowGuid() == null) destination.getModel().setRowGuid();
+			destination.getLocation().getModel().setName(destination.getModel().getRowGuid());
+		}else if (source.getLocation() == null){
+			destination.setLocation(null);
+		}else{
+			destination.getLocation().setCoordinates(source.getLocation().getCoordinates());
 		}
 	}
 
@@ -193,7 +207,7 @@ public class CategorySurveyService {
 		result.setModel(station);
 		ElementService es = new ElementService(SageApplication.getInstance().getDaoSession());
 		List<StationElement> stationElements = es.findStationElements(station);
-		if(stationElements != null)	result.setStationElements(ElementService.convertFromStationElements(stationElements));
+		if(stationElements != null)	result.setStationElements(es.convertFromStationElements(stationElements));
 		return result;
 	}
 	

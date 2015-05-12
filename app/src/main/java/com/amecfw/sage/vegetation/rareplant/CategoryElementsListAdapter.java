@@ -39,6 +39,7 @@ import com.amecfw.sage.ui.ElementsMultiSelectListAdapter;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.ListAdapter;
 import com.amecfw.sage.fieldbook.R;
+import com.amecfw.sage.util.OnEditListener;
 
 public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsListAdapter.ViewModel> {
 	
@@ -205,6 +206,7 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 	private GpsIncomingHandler gpsHandler;
 	private void getCoordinate(ViewHolder view, int position){
 		if(gpsHandler == null) gpsHandler = new GpsIncomingHandler(this);
+		gpsHandler.setOnEditListener(gpsOnEditListener);
 		gpsHandler.getCoordinate(view, get(position));
 	}
 
@@ -214,6 +216,18 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			gpsHandler = null;
 		}
 	}
+
+	com.amecfw.sage.util.OnEditListener gpsOnEditListener = new com.amecfw.sage.util.OnEditListener() {
+		@Override
+		public void onDirty() {
+			if(! mIsDirty) mIsDirty = true;
+		}
+
+		@Override
+		public void onSave() {
+			//Do nothing
+		}
+	};
 
 	private View.OnClickListener gpsButtonClickListener = new View.OnClickListener() {
 		@Override
@@ -230,6 +244,7 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 		private Messenger gpsMessenger;
 		public boolean isWaitingForGpsResponse;
 		public CategoryElementsListAdapter adapter;
+		private com.amecfw.sage.util.OnEditListener onEditListener;
 
 		public GpsIncomingHandler(CategoryElementsListAdapter adapter) {
 			gpsMessenger = SageApplication.getInstance().getGpsMessenger();
@@ -242,6 +257,8 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			sendCoordinateRequest();
 		}
 
+		public void setOnEditListener(com.amecfw.sage.util.OnEditListener listener){onEditListener = listener; };
+
 		@Override
 		public void handleMessage(Message m) {
 			try {
@@ -252,6 +269,7 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 					else {
 						viewHolder.coordinateText.setText(LocationService.formatLocationText(location));
 						viewModel.location = location;
+						if(onEditListener != null) onEditListener.onDirty();
 					}
 				}
 			} catch (Exception e) {
@@ -293,6 +311,7 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			gpsMessenger = null;
 			location = null;
 			viewHolder = null;
+			onEditListener = null;
 			adapter = null;
 		}
 	}
