@@ -18,6 +18,7 @@ import com.amecfw.sage.persistence.ElementGroupDao;
 import com.amecfw.sage.persistence.GroupElementDao;
 import com.amecfw.sage.persistence.OwnerDao;
 import com.amecfw.sage.persistence.StationElementDao;
+import com.amecfw.sage.proxy.LocationProxy;
 import com.amecfw.sage.proxy.StationElementProxy;
 import com.amecfw.sage.util.CollectionOperations;
 
@@ -306,17 +307,26 @@ public class ElementService {
 		return proxy;
 	}
 	
-	public static List<StationElementProxy> convertFromStationElements(List<StationElement> stationElements){
+	public List<StationElementProxy> convertFromStationElements(List<StationElement> stationElements){
 		if(stationElements == null || stationElements.size() == 0) return new ArrayList<StationElementProxy>();
 		List<StationElementProxy> results = new ArrayList<StationElementProxy>(stationElements.size());
 		for(StationElement se: stationElements) results.add(convertFromStationElement(se));
 		return results;
 	}
 	
-	public static StationElementProxy convertFromStationElement(StationElement stationElement){
+	public StationElementProxy convertFromStationElement(StationElement stationElement){
 		StationElementProxy proxy = new StationElementProxy();
 		proxy.setModel(stationElement);
+		proxy.setLocation(find(stationElement));
 		return proxy;
+	}
+
+	public LocationProxy find(StationElement stationElement){
+		LocationService ls = new LocationService(session);
+		List<Location> locations = ls.findByName(stationElement.getRowGuid());
+		if(locations == null || locations.size() == 0) return null;
+		if(locations.size() == 1) return ls.getProxy(locations.get(0));
+		else return ls.getProxy(locations.get(locations.size() - 1)); //get the last one should likely delete the rest
 	}
 	
 	public void saveOrUpdate(List<StationElementProxy> proxies, Station station){

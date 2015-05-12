@@ -133,6 +133,8 @@ public class SageApplication implements ApplicationCache, ApplicationGps {
 
 	// END Preferences
 	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public Context getContext(){return context; }
 	
 	public static synchronized void dispose(){
 		instance.context.unbindService(instance.gpsServiceConnection);

@@ -63,7 +63,21 @@ public class CategorySurveyService {
 			StationElementProxy temp = CollectionOperations.find(fromVM, proxy, comparator);
 			proxy.getModel().setCount(temp.getModel().getCount());
 			MetaDataService.MetaSupportExtensionMethods.replace(proxy.getModel(), temp.getModel());
-			//TODO: deal with photos and locations eventually
+			updateLocationProxy(proxy, temp);
+			//TODO: deal with photos
+		}
+	}
+
+	private static void updateLocationProxy(StationElementProxy destination, StationElementProxy source){
+		if(destination.getLocation() == null && source.getLocation() == null) return;
+		else if(destination.getLocation() == null){
+			destination.setLocation(source.getLocation());
+			if(destination.getModel().getRowGuid() == null) destination.getModel().setRowGuid();
+			destination.getLocation().getModel().setName(destination.getModel().getRowGuid());
+		}else if (source.getLocation() == null){
+			destination.setLocation(null);
+		}else{
+			destination.getLocation().setCoordinates(source.getLocation().getCoordinates());
 		}
 	}
 
@@ -122,11 +136,11 @@ public class CategorySurveyService {
 		if(metaElements != null && metaElements.size() > 0) se.setMetaData(metaElements);
 		se.setElement(element);
 		proxy.setModel(se);
-		if(viewModel.getLocation() != null) {
+		if(viewModel.location != null) {
 			Location l = new Location();
 			if(proxy.getModel().getRowGuid() == null) proxy.getModel().setRowGuid();
 			l.setName(proxy.getModel().getRowGuid());
-			LocationProxy lp = LocationService.createPointFromLocation(viewModel.getLocation(), l);
+			LocationProxy lp = LocationService.createPointFromLocation(viewModel.location, l);
 			proxy.setLocation(lp);
 		}
 		return proxy;
@@ -136,7 +150,6 @@ public class CategorySurveyService {
 	 * Builds a ViewModel from the provided proxy
 	 * note: uses the first location in the proxy's locations as the location
 	 * @param proxy
-	 * @param elementsListAdapterViewMode
 	 * @return the generated ViewModel or null if the proxy, or the proxy's model's element is null
 	 */
 	public static CategoryElementsListAdapter.ViewModel convertToViewModel(StationElementProxy proxy){
@@ -145,7 +158,7 @@ public class CategorySurveyService {
 		if(vm == null) return null;
 		DescriptorServices.getByFieldDescriptor(vm, proxy.getModel());
 		if(proxy.getModel().hasMetaData()) MetaDataService.updateAnnotations(vm, proxy.getModel().getMetaData());
-		if(proxy.getLocation() != null && proxy.getLocation().getLocations().size() > 0) vm.setLocation(proxy.getLocation().getLocations().get(0));
+		if(proxy.getLocation() != null && proxy.getLocation().getLocations().size() > 0) vm.location = proxy.getLocation().getLocations().get(0);
 		return vm;
 	}
 	
@@ -180,7 +193,6 @@ public class CategorySurveyService {
 	/**
 	 * 
 	 * @param element
-	 * @param elementsListAdapterViewMode used to determine which name to display (default is common name)
 	 * @return
 	 */
 	public static CategoryElementsListAdapter.ViewModel convertToViewModel(Element element){
@@ -195,7 +207,7 @@ public class CategorySurveyService {
 		result.setModel(station);
 		ElementService es = new ElementService(SageApplication.getInstance().getDaoSession());
 		List<StationElement> stationElements = es.findStationElements(station);
-		if(stationElements != null)	result.setStationElements(ElementService.convertFromStationElements(stationElements));
+		if(stationElements != null)	result.setStationElements(es.convertFromStationElements(stationElements));
 		return result;
 	}
 	

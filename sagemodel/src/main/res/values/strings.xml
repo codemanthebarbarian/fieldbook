@@ -50,6 +50,9 @@
     <!-- Owner Dialog -->
     <string name="owenerDialogFragment_title">Select Owner</string>
 
+    <!-- GPS -->
+    <string name="gps_format" formatted="false">Lat: %f Long: %f Elev: %f Acc: %f</string>
+
     <!-- preferences_app -->
     <string name="preferencesApp_themeTitle">Theme</string>
     <string name="preferencesApp_themeDialogTitle">Theme</string>
