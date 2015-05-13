@@ -59,5 +59,21 @@
         android:layout_alignParentStart="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/notAvailable_na"/>
+    <ImageButton
+        android:id="@+id/category_elementView_takePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/category_elementView_locationButton"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_menu_camera"
+        android:contentDescription="Take Photo"/>
+    <include
+        layout="@layout/photo_horizontal_fragment"
+        android:layout_height="75dp"
+        android:layout_width="match_parent"
+        android:layout_alignTop="@id/category_elementView_takePhoto"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/category_elementView_takePhoto"
+        />
 </RelativeLayout>
  

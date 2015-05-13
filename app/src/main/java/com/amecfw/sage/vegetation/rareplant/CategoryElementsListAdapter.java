@@ -1,12 +1,16 @@
 package com.amecfw.sage.vegetation.rareplant;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.content.Context;
 import android.location.Location;
 import android.media.Image;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
@@ -21,6 +25,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -34,8 +39,14 @@ import com.amecfw.sage.model.StationElementMeta;
 import com.amecfw.sage.model.service.DescriptorServices;
 import com.amecfw.sage.model.service.GpsLoggingService;
 import com.amecfw.sage.model.service.LocationService;
+import com.amecfw.sage.model.service.PhotoService;
+import com.amecfw.sage.proxy.PhotoProxy;
 import com.amecfw.sage.proxy.ViewModelBaseEquatable;
 import com.amecfw.sage.ui.ElementsMultiSelectListAdapter;
+import com.amecfw.sage.ui.PhotoHorizontalListFragment;
+import com.amecfw.sage.ui.PhotoListAdapter;
+import com.amecfw.sage.ui.PhotoPathListAdapter;
+import com.amecfw.sage.util.ActionEvent;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.ListAdapter;
 import com.amecfw.sage.fieldbook.R;
@@ -88,17 +99,22 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			holder.getCoordinate.setOnClickListener(gpsButtonClickListener);
 			convertView.setTag(R.id.sage_tag_list_viewHolder, holder);
 			holder.getCoordinate.setTag(R.id.sage_tag_list_viewHolder, holder);
+			holder.getPhoto = (ImageButton) convertView.findViewById(R.id.category_elementView_takePhoto);
+			holder.photos = (LinearLayout) convertView.findViewById(android.R.id.list);
+			holder.getPhoto.setOnClickListener(photoListener);
+			holder.adapter = new PhotoPathListAdapter(context, new ArrayList<String>());
 		}else holder = (ViewHolder) convertView.getTag(R.id.sage_tag_list_viewHolder);
 		holder.notes.setTag(R.id.sage_tag_list_position, position);
 		holder.cover.setTag(R.id.sage_tag_list_position, position);
 		holder.getCoordinate.setTag(R.id.sage_tag_list_position, position);
+		holder.getPhoto.setTag(R.id.sage_tag_list_position, position);
 		ViewModel current = items.get(position);
 		holder.displayName.setText(getDisplayName(current));
 		holder.notes.setText(current.getComment());
-		//if(Convert.getTagAs(holder.notes, com.amecfw.sage.R.id.sage_tag_list_hasFocus, false)) holder.notes.requestFocusFromTouch();
 		holder.cover.setProgress(current.getCover() / 5);
 		holder.coverText.setText(Integer.toString(current.getCover()));
 		if(current.location != null) holder.coordinateText.setText(LocationService.formatLocationText(current.location));
+		setPhotos(current, holder);
 		return convertView;
 	}
 	
@@ -125,12 +141,6 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 				updateNote((int)editText.getTag(R.id.sage_tag_list_position), Convert.toStringOrNull(editText));
 				currentFocus = null;
 			}
-			//if(hasFocus){
-			//	v.setTag(com.amecfw.sage.R.id.sage_tag_list_hasFocus, hasFocus);
-			//}else{
-			//	EditText editText = (EditText) v;
-			//	updateNote((int)editText.getTag(com.amecfw.sage.R.id.sage_tag_list_position), Convert.toStringOrNull(editText));
-			//}			
 		}
 	};
 	
@@ -198,6 +208,9 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 		public TextView coverText;
 		public ImageButton getCoordinate;
 		public TextView coordinateText;
+		public ImageButton getPhoto;
+		public LinearLayout photos;
+		public PhotoPathListAdapter adapter;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,6 +333,50 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
+	// PHOTO
+
+	private ActionEvent.Listener photoActionListener;
+	public static final String KEY_POSITION = Integer.toString(R.id.sage_tag_list_position);
+
+	/**
+	 * An ActionEvent.Listener to provide photos. Should return the path to the photo with the
+	 * provided position see addPhoto. The Postion of the item requesting the photo is provided
+	 * int the ActionEvent arguments with a key of KEY_POSITION
+	 * @param listener the action event listener
+	 */
+	public void setPhotoActionListener(ActionEvent.Listener listener){ photoActionListener = listener; }
+
+	private View.OnClickListener photoListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if(photoActionListener != null){
+				Bundle args = new Bundle();
+				args.putInt(Integer.toString(R.id.sage_tag_list_position), (int) v.getTag(R.id.sage_tag_list_position));
+				photoActionListener.actionPerformed(PhotoService.takePhoto(args));
+			}
+		}
+	};
+
+	public void addPhoto(int postion, PhotoProxy proxy){
+		ViewModel vm = get(postion);
+
+	}
+
+	private void setPhotos(ViewModel vm, ViewHolder holder){
+		if(vm.photos.length > 0){
+			holder.adapter.setItems(Arrays.asList(vm.photos));
+			holder.photos.removeAllViews();
+			for(int i = 0 ; i < holder.adapter.getCount() ; i++){
+				View v = holder.adapter.getView(i, null, holder.photos);
+				holder.photos.addView(v);
+			}
+		}
+	}
+
+	// END PHOTO
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	// VIEW_MODEL
 	
 	public static class ViewModel extends ViewModelBaseEquatable{
@@ -339,6 +396,8 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 		public Location location;
 		@FieldDescriptor(clazz=StationElement.class, targetGetter = "getRowGuid", targetSetter = "setRowGuid")
 		private String rowGuid;
+		/** a string array of photo paths */
+		public String[] photos;
 
 		public long getElementId() {
 			return elementId;
@@ -407,6 +466,8 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			comment = in.readString();
 			cover = in.readString();
 			rowGuid = in.readString();
+			photos = new String[in.readInt()];
+			in.readStringArray(photos);
 			location = in.readParcelable(Location.class.getClassLoader());
 		}
 
@@ -424,6 +485,8 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			dest.writeString(comment);
 			dest.writeString(cover);
 			dest.writeString(getRowGuid());
+			dest.writeInt(photos == null ? 0 : photos.length );
+			dest.writeStringArray(photos);
 			dest.writeParcelable(location, PARCELABLE_WRITE_RETURN_VALUE);
 		}
 	}

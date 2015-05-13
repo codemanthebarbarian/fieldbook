@@ -4,14 +4,22 @@ import java.util.ArrayList;
 
 import com.amecfw.sage.model.EqualityComparatorOf;
 import com.amecfw.sage.model.SageApplication;
+import com.amecfw.sage.model.service.PhotoService;
+import com.amecfw.sage.proxy.PhotoProxy;
+import com.amecfw.sage.ui.PhotoActivity;
+import com.amecfw.sage.ui.PhotoHorizontalListFragment;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.fieldbook.R;
+import com.amecfw.sage.util.ViewState;
 import com.amecfw.sage.vegetation.rareplant.CategoryElementsListAdapter.ViewModel;
 import com.amecfw.sage.util.ActionEvent;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +27,7 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class CategoryElementsDialogListFragment extends DialogFragment implements ActionEvent.Listener {
 	
@@ -108,6 +117,10 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 			mIsDirty = false;
 			if(exitListener != null) exitListener.onExit(elements, null);
 			break;
+			case ActionEvent.DO_COMMAND:
+				int command = e.getArgs().getInt(ActionEvent.ARG_COMMAND, -1);
+				if(command == PhotoService.COMMAND_TAKE_PHOTO) takePhoto(e.getArgs());
+				break;
 		}		
 	}
 	
@@ -153,4 +166,42 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 	public void setOnExitListener(OnExitListener<ArrayList<ViewModel>> exitListener){
 		this.exitListener = exitListener;
 	}
+
+	///////////////////////////////////////////////////////////////////////////
+	// PHOTO
+
+	private int photoListPosition = -1;
+
+	private void takePhoto(Bundle args){
+		PhotoProxy proxy = PhotoService.createProxy(null);
+		SageApplication.getInstance().setItem(PhotoActivity.ARG_VIEW_PROXY_CACHE_KEY, proxy);
+		Intent intent = new Intent(getActivity(), PhotoActivity.class);
+		intent.putExtra(PhotoActivity.ARG_VIEW_PROXY_CACHE_KEY, PhotoActivity.ARG_VIEW_PROXY_CACHE_KEY);
+		intent.putExtra(PhotoActivity.ARG_VIEW_STATE, ViewState.getViewStateAdd());
+		startActivityForResult(intent, PhotoService.PHOTO_RESULT_CODE);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == PhotoService.PHOTO_RESULT_CODE){
+			if(resultCode == Activity.RESULT_OK){
+				PhotoProxy photoProxy = SageApplication.getInstance().removeItem(data.getExtras().getString(PhotoActivity.ARG_VIEW_PROXY_CACHE_KEY));
+				if(photoProxy != null) sendPhoto(photoProxy);
+			}
+			if(resultCode == Activity.RESULT_CANCELED){
+				Toast.makeText(getActivity(), "Photo Canceled by User", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+
+	private void sendPhoto(PhotoProxy proxy){
+		if(photoListPosition < 0){
+			new PhotoService(SageApplication.getInstance().getDaoSession()).delete(proxy);
+			return;
+		}
+		adapter.addPhoto(photoListPosition, proxy);
+	}
+
+	// END PHOTO
+	///////////////////////////////////////////////////////////////////////////
 }

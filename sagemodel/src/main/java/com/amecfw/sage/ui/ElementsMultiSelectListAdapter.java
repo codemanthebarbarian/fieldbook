@@ -199,7 +199,7 @@ public class ElementsMultiSelectListAdapter extends ListAdapter<Element> impleme
 		}
 
 		private Boolean matches(String code, CharSequence value) {
-			if (code.toLowerCase(Locale.getDefault()).startsWith(value.toString().toLowerCase(Locale.getDefault())))
+			if (code.toLowerCase(Locale.getDefault()).contains(value.toString().toLowerCase(Locale.getDefault())))
 				return true;
 
 			return false;
