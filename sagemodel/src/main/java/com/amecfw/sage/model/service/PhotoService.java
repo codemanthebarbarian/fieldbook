@@ -233,7 +233,20 @@ public class PhotoService {
 		}
 		return results;
 	}
-	
+
+	public static String[] convertProxiesToFilePathArray(List<PhotoProxy> proxies){
+		if(proxies == null) return null;
+		if(proxies.size() == 0) return new String[0];
+		String base = getPhotoDirectory().getAbsolutePath();
+		String[] results = new String[proxies.size()];
+		for(int i = 0 ; i < proxies.size() ; i++){
+			PhotoProxy pp = proxies.get(i);
+			if(pp.getFile() != null) results[i] =  pp.getFile().getAbsolutePath();
+			else results[i] = String.format("%s/%s", base, pp.getModel().buildFilePath());
+		}
+		return results;
+	}
+
 	public static File getPhotoDirectory(){
 		return SageApplication.getInstance().getPhotosDirectory();
 	}
@@ -361,6 +374,7 @@ public class PhotoService {
 
 	public static final int PHOTO_RESULT_CODE = 100;
 	public static final int COMMAND_TAKE_PHOTO = PHOTO_RESULT_CODE;
+	public static final String ARG_PHOTO_PROXY_CACHE_KEY = "com.amecfw.sage.model.service.PhotoService.proxy";
 
 	/**
 	 * Create an ActionEvent with a ARG_COMMAND of COMMAND_TAKE_PHOTO.
@@ -372,6 +386,22 @@ public class PhotoService {
 	public static ActionEvent takePhoto(Bundle args){
 		if(args == null) args = new Bundle();
 		args.putInt(ActionEvent.ARG_COMMAND, COMMAND_TAKE_PHOTO);
+		return ActionEvent.getActionDoCommand(args);
+	}
+
+	/**
+	 * Create an ActionEvent with an ARG_COMMAND of PHOTO_RESULT_CODE.
+	 * Puts an argument with key of ARG_PHOTO_PROXY_CACHE_KEY to retrieve the photo proxy
+	 * from the SageApplication cache. Use remove to get the proxy.
+	 * @param args the argument with additional values.
+	 * @param proxy the photoproxy
+	 * @return an actionevent
+	 */
+	public static ActionEvent addProxy(Bundle args, PhotoProxy proxy){
+		if(args == null) args = new Bundle();
+		args.putString(ARG_PHOTO_PROXY_CACHE_KEY, ARG_PHOTO_PROXY_CACHE_KEY);
+		SageApplication.getInstance().setItem(ARG_PHOTO_PROXY_CACHE_KEY, proxy);
+		args.putInt(ActionEvent.ARG_COMMAND, PHOTO_RESULT_CODE);
 		return ActionEvent.getActionDoCommand(args);
 	}
 

@@ -52,6 +52,7 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 		elements = savedInstanceState.getParcelableArrayList(ARG_ELEMENTS);
 		adapter = new CategoryElementsListAdapter(getActivity(), elements, SageApplication.getInstance().getElementsMode());
 		adapter.setEditListener(editListener);
+		adapter.setPhotoActionListener(this);
 		mIsDirty = savedInstanceState.getBoolean(ARG_IS_DIRTY, true);
 		dataSetChanged();
 	}
@@ -60,6 +61,7 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 		if(elements == null) elements = new ArrayList<>();
 		adapter = new CategoryElementsListAdapter(getActivity(), elements, SageApplication.getInstance().getElementsMode());
 		adapter.setEditListener(editListener);
+		adapter.setPhotoActionListener(this);
 		dataSetChanged();
 	}
 
@@ -67,7 +69,8 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putParcelableArrayList(ARG_ELEMENTS, elements);
 		outState.putBoolean(ARG_IS_DIRTY, mIsDirty);
-		adapter.setEditListener(null);
+		//adapter.setEditListener(null);
+		//adapter.setPhotoActionListener(null);
 		super.onSaveInstanceState(outState);
 	}
 	
@@ -171,8 +174,20 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 	// PHOTO
 
 	private int photoListPosition = -1;
+	private ActionEvent.Listener photoProxyActionListener;
+	public static final String ARG_VIEW_MODEL = "com.amedfw.sage.vegetation.rareplant.CategoryElementsDialogListFragment.viewModel";
+
+	/**
+	 * Set an ActionEvent.Listener to retrieve a created PhotoProxy. Create the ActionEvent using
+	 * PhotoService.addProxy
+	 * Will add the additional argument of the ViewModel the photo is associated with.
+	 * @param listener
+	 */
+	public void setPhotoProxyActionListener(ActionEvent.Listener listener){ photoProxyActionListener = listener; }
 
 	private void takePhoto(Bundle args){
+		photoListPosition = args.getInt(SageApplication.KEY_POSITION, -1);
+		if(photoListPosition < 0) return;
 		PhotoProxy proxy = PhotoService.createProxy(null);
 		SageApplication.getInstance().setItem(PhotoActivity.ARG_VIEW_PROXY_CACHE_KEY, proxy);
 		Intent intent = new Intent(getActivity(), PhotoActivity.class);
@@ -200,6 +215,12 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 			return;
 		}
 		adapter.addPhoto(photoListPosition, proxy);
+		dataSetChanged();
+		if(photoProxyActionListener != null){
+			Bundle args = new Bundle();
+			args.putParcelable(ARG_VIEW_MODEL, adapter.get(photoListPosition));
+			photoProxyActionListener.actionPerformed(PhotoService.addProxy(args, proxy));
+		}
 	}
 
 	// END PHOTO

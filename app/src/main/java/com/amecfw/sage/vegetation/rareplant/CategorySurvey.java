@@ -10,6 +10,8 @@ import com.amecfw.sage.model.ElementGroup;
 import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.service.ElementService;
+import com.amecfw.sage.model.service.PhotoService;
+import com.amecfw.sage.proxy.PhotoProxy;
 import com.amecfw.sage.ui.CancelSaveExitDialog;
 import com.amecfw.sage.ui.ElementsMultiSelectListDialogFragment;
 import com.amecfw.sage.util.ActionEvent;
@@ -17,6 +19,7 @@ import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.util.OnItemSelectedHandler;
 import com.amecfw.sage.util.ViewState;
 import com.amecfw.sage.fieldbook.R;
+import com.amecfw.sage.vegetation.VegetationSurveyProxy;
 import com.amecfw.sage.vegetation.elements.GroupsListDialogFragment;
 
 import android.app.Activity;
@@ -86,6 +89,7 @@ public class CategorySurvey extends Activity {
 		isDirty = savedInstanceState.getBoolean(ARG_IS_DIRTY, true);
 		currentCategory = savedInstanceState.getParcelable(ARG_CATEGORY);
 		if(viewState == null) viewState = ViewState.getViewStateAdd();
+		viewState.addListener(stateListener);
 		FragmentManager fm = getFragmentManager();
 		Fragment f = fm.findFragmentByTag(CategoryFragment.class.getName());
 		if(f != null){
@@ -129,7 +133,7 @@ public class CategorySurvey extends Activity {
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		viewState.removeListener(stateListener);
+		//viewState.removeListener(stateListener);
 		outState.putParcelable(ARG_VIEW_STATE, viewState);
 		outState.putString(ARG_PROXY, ARG_PROXY);
 		SageApplication.getInstance().setItem(ARG_PROXY, proxy);
@@ -255,6 +259,7 @@ public class CategorySurvey extends Activity {
 				(CategoryElementsDialogListFragment) fragment;
 			getFragmentManager().beginTransaction().replace(R.id.rareplant_categroySurvey_containerB, categoryElementsFrag, 
 					CategoryElementsDialogListFragment.class.getName()).commit();
+			categoryElementsFrag.setPhotoProxyActionListener(photoActionEventLisener);
 			getFragmentManager().executePendingTransactions();
 			//uiMutex.release();
 			saveButton.setVisible(true);
@@ -485,6 +490,40 @@ public class CategorySurvey extends Activity {
 	};
 	
 	// END EXIT METHODS ///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// Action Event
+
+	private ActionEvent.Listener photoActionEventLisener = new ActionEvent.Listener(){
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			switch (e.getAction()){
+				case ActionEvent.DO_COMMAND:
+					doCommand(e);
+					break;
+			}
+		}
+	};
+
+	private void doCommand(ActionEvent ae){
+		Bundle args = ae.getArgs();
+		int command = args.getInt(ActionEvent.ARG_COMMAND, -1);
+		switch (command){
+			case PhotoService.PHOTO_RESULT_CODE:
+				CategoryElementsListAdapter.ViewModel vm = args.getParcelable(CategoryElementsDialogListFragment.ARG_VIEW_MODEL);
+				PhotoProxy photoProxy = SageApplication.getInstance().removeItem(args.getString(PhotoService.ARG_PHOTO_PROXY_CACHE_KEY));
+				addPhoto(photoProxy, vm, currentCategory);
+				break;
+		}
+	}
+
+	private void addPhoto(PhotoProxy photoProxy, CategoryElementsListAdapter.ViewModel viewModel, CategoryFragment.ViewModel category){
+		proxy.addPhotoProxy(photoProxy, viewModel, category.getCategoryName());
+	}
+
+	// END Action Event
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	
 }

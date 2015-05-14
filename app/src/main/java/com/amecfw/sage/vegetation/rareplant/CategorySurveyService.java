@@ -13,10 +13,12 @@ import com.amecfw.sage.model.service.DescriptorServices;
 import com.amecfw.sage.model.service.ElementService;
 import com.amecfw.sage.model.service.LocationService;
 import com.amecfw.sage.model.service.MetaDataService;
+import com.amecfw.sage.model.service.PhotoService;
 import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.model.service.SurveyService;
 import com.amecfw.sage.persistence.DaoSession;
 import com.amecfw.sage.proxy.LocationProxy;
+import com.amecfw.sage.proxy.PhotoProxy;
 import com.amecfw.sage.proxy.StationElementProxy;
 import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.util.CollectionOperations;
@@ -65,6 +67,7 @@ public class CategorySurveyService {
 			MetaDataService.MetaSupportExtensionMethods.replace(proxy.getModel(), temp.getModel());
 			updateLocationProxy(proxy, temp);
 			//TODO: deal with photos
+			// photos are handled at the time a picture is taken
 		}
 	}
 
@@ -96,6 +99,15 @@ public class CategorySurveyService {
 			return proxies.size();
 		}
 		return CollectionOperations.Merge(proxy.getStationElements(), ElementService.convertFromElements(elements), new StationElementProxy.StationElementProxyByElementRowGuidComparator());
+	}
+
+	public static void addPhotoProxy(VegetationSurveyProxy proxy, PhotoProxy photoProxy, CategoryElementsListAdapter.ViewModel viewModel){
+		for(StationElementProxy seProxy: proxy.getStationElements()){
+			if(seProxy.getModel().getElement().getId() == viewModel.getElementId()){
+				if(seProxy.getPhotos() == null) seProxy.setPhotos(new ArrayList<PhotoProxy>());
+				seProxy.getPhotos().add(photoProxy);
+			}
+		}
 	}
 	
 	public static List<VegetationSurveyProxy> generateCategories(String[] canopyNames){
@@ -159,6 +171,7 @@ public class CategorySurveyService {
 		DescriptorServices.getByFieldDescriptor(vm, proxy.getModel());
 		if(proxy.getModel().hasMetaData()) MetaDataService.updateAnnotations(vm, proxy.getModel().getMetaData());
 		if(proxy.getLocation() != null && proxy.getLocation().getLocations().size() > 0) vm.location = proxy.getLocation().getLocations().get(0);
+		if(proxy.getPhotos() != null && proxy.getPhotos().size() > 0) vm.photos = PhotoService.convertProxiesToFilePathArray(proxy.getPhotos());
 		return vm;
 	}
 	

@@ -336,12 +336,11 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 	// PHOTO
 
 	private ActionEvent.Listener photoActionListener;
-	public static final String KEY_POSITION = Integer.toString(R.id.sage_tag_list_position);
 
 	/**
 	 * An ActionEvent.Listener to provide photos. Should return the path to the photo with the
 	 * provided position see addPhoto. The Postion of the item requesting the photo is provided
-	 * int the ActionEvent arguments with a key of KEY_POSITION
+	 * int the ActionEvent arguments with a key of SageApplication.KEY_POSITION
 	 * @param listener the action event listener
 	 */
 	public void setPhotoActionListener(ActionEvent.Listener listener){ photoActionListener = listener; }
@@ -351,7 +350,7 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 		public void onClick(View v) {
 			if(photoActionListener != null){
 				Bundle args = new Bundle();
-				args.putInt(Integer.toString(R.id.sage_tag_list_position), (int) v.getTag(R.id.sage_tag_list_position));
+				args.putInt(SageApplication.KEY_POSITION, (int) v.getTag(R.id.sage_tag_list_position));
 				photoActionListener.actionPerformed(PhotoService.takePhoto(args));
 			}
 		}
@@ -359,11 +358,16 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 
 	public void addPhoto(int postion, PhotoProxy proxy){
 		ViewModel vm = get(postion);
-
+		if(vm.photos == null) vm.photos = new String[]{proxy.getFile().getAbsolutePath()};
+        else{
+            vm.photos = Arrays.copyOf(vm.photos, vm.photos.length + 1);
+            vm.photos[vm.photos.length -1] = proxy.getFile().getAbsolutePath();
+        }
+        onEdit(vm);
 	}
 
 	private void setPhotos(ViewModel vm, ViewHolder holder){
-		if(vm.photos.length > 0){
+		if(vm.photos != null && vm.photos.length > 0){
 			holder.adapter.setItems(Arrays.asList(vm.photos));
 			holder.photos.removeAllViews();
 			for(int i = 0 ; i < holder.adapter.getCount() ; i++){

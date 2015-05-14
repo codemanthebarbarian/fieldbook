@@ -10,6 +10,7 @@ import com.amecfw.sage.model.ElementGroup;
 import com.amecfw.sage.model.EqualityComparatorOf;
 import com.amecfw.sage.model.GroupElement;
 import com.amecfw.sage.model.Location;
+import com.amecfw.sage.model.Photo;
 import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.StationElement;
 import com.amecfw.sage.persistence.DaoSession;
@@ -318,6 +319,8 @@ public class ElementService {
 		StationElementProxy proxy = new StationElementProxy();
 		proxy.setModel(stationElement);
 		proxy.setLocation(find(stationElement));
+		List<Photo> photos = new PhotoService(session).find(stationElement);
+		if(photos != null && photos.size() > 0) proxy.setPhotos(PhotoService.convertToProxy(photos, stationElement));
 		return proxy;
 	}
 

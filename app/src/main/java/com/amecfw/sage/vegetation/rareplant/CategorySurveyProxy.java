@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.amecfw.sage.model.Element;
+import com.amecfw.sage.proxy.PhotoProxy;
 import com.amecfw.sage.proxy.StationElementProxy;
 import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.util.CollectionOperations;
@@ -98,6 +99,11 @@ public class CategorySurveyProxy extends StationProxy {
 	private void initialize() {
 		canopyElementViewModels = new ArrayList<ArrayList<CategoryElementsListAdapter.ViewModel>>(canopies.size());
 		for(int i = 0 ; i < canopies.size() ; i++) canopyElementViewModels.add(null);
+	}
+
+	public void addPhotoProxy(PhotoProxy proxy, CategoryElementsListAdapter.ViewModel viewModel, String canopy){
+		VegetationSurveyProxy surveyProxy = canopies.get(getIndex(canopy));
+		CategorySurveyService.addPhotoProxy(surveyProxy, proxy, viewModel);
 	}
 	
 }
