@@ -33,6 +33,7 @@ public class SageApplication implements ApplicationCache, ApplicationGps {
 	
 	public static final String THEME_LIGHT = "LIGHT";
 	public static final String THEME_DARK = "DARK";
+	public static final String KEY_POSITION = Integer.toString(R.id.sage_tag_list_position);
 	
 	private static SageApplication instance;
 	private Context context;

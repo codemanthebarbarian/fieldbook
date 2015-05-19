@@ -5,4 +5,5 @@
     <item type="id" name="sage_tag_list_hasFocus"/>
     <item type="id" name="sage_tag_list_isChecked"/>
     <item type="id" name="sage_tag_list_view"/>
+    <item type="id" name="sage_tag_adapter"/>
 </resources>

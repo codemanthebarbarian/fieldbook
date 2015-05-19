@@ -15,6 +15,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -28,6 +30,7 @@ import com.amecfw.sage.persistence.PersistanceUtilities;
 import com.amecfw.sage.persistence.PhotoDao;
 import com.amecfw.sage.proxy.PhotoProxy;
 import com.amecfw.sage.ui.MetaDataListDialogFragment;
+import com.amecfw.sage.util.ActionEvent;
 import com.amecfw.sage.util.CollectionOperations;
 import com.amecfw.sage.model.EqualityComparatorOf;
 
@@ -230,7 +233,20 @@ public class PhotoService {
 		}
 		return results;
 	}
-	
+
+	public static String[] convertProxiesToFilePathArray(List<PhotoProxy> proxies){
+		if(proxies == null) return null;
+		if(proxies.size() == 0) return new String[0];
+		String base = getPhotoDirectory().getAbsolutePath();
+		String[] results = new String[proxies.size()];
+		for(int i = 0 ; i < proxies.size() ; i++){
+			PhotoProxy pp = proxies.get(i);
+			if(pp.getFile() != null) results[i] =  pp.getFile().getAbsolutePath();
+			else results[i] = String.format("%s/%s", base, pp.getModel().buildFilePath());
+		}
+		return results;
+	}
+
 	public static File getPhotoDirectory(){
 		return SageApplication.getInstance().getPhotosDirectory();
 	}
@@ -284,7 +300,34 @@ public class PhotoService {
 		}
 		return results;
 	}
-	
+
+	public static void setImageFromPath(ImageView container, String path){
+		if(path == null) return;
+		File f = new File(path);
+		if(! f.exists()) return;
+		Bitmap photo = BitmapFactory.decodeFile(path);
+		if(photo == null) return;
+		int rotate = 0;
+		try {
+			ExifInterface exif = new ExifInterface(path);
+			float[] latLong = new float[2];
+			int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+			switch(orientation){
+				case ExifInterface.ORIENTATION_ROTATE_90: rotate = 90 ; break;
+				case ExifInterface.ORIENTATION_ROTATE_180: rotate = 180; break;
+				case ExifInterface.ORIENTATION_ROTATE_270: rotate = 270; break;
+			}
+		} catch (IOException e) {
+			Log.e("CameraActivity", "Unable to read exif tags.");
+		}
+		if(rotate > 0 ){
+			Matrix matrix = new Matrix();
+			matrix.postRotate(rotate);
+			photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+		}
+		container.setImageBitmap(photo);
+	}
+
 	public static void setImage(ImageView container, PhotoProxy proxy){
 		if(proxy == null) return;
 		if(proxy.getFile() == null){
@@ -325,6 +368,45 @@ public class PhotoService {
 		}
 		container.setImageBitmap(result);
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// ACTION EVENT
+
+	public static final int PHOTO_RESULT_CODE = 100;
+	public static final int COMMAND_TAKE_PHOTO = PHOTO_RESULT_CODE;
+	public static final String ARG_PHOTO_PROXY_CACHE_KEY = "com.amecfw.sage.model.service.PhotoService.proxy";
+
+	/**
+	 * Create an ActionEvent with a ARG_COMMAND of COMMAND_TAKE_PHOTO.
+	 * If the args is provided, will add the ARG_COMMAND, otherwise will
+	 * create a new bundle with the command.
+	 * @param args the arguments without the ARG_COMMAND
+	 * @return the ActionEvent with the arg to take a photo
+	 */
+	public static ActionEvent takePhoto(Bundle args){
+		if(args == null) args = new Bundle();
+		args.putInt(ActionEvent.ARG_COMMAND, COMMAND_TAKE_PHOTO);
+		return ActionEvent.getActionDoCommand(args);
+	}
+
+	/**
+	 * Create an ActionEvent with an ARG_COMMAND of PHOTO_RESULT_CODE.
+	 * Puts an argument with key of ARG_PHOTO_PROXY_CACHE_KEY to retrieve the photo proxy
+	 * from the SageApplication cache. Use remove to get the proxy.
+	 * @param args the argument with additional values.
+	 * @param proxy the photoproxy
+	 * @return an actionevent
+	 */
+	public static ActionEvent addProxy(Bundle args, PhotoProxy proxy){
+		if(args == null) args = new Bundle();
+		args.putString(ARG_PHOTO_PROXY_CACHE_KEY, ARG_PHOTO_PROXY_CACHE_KEY);
+		SageApplication.getInstance().setItem(ARG_PHOTO_PROXY_CACHE_KEY, proxy);
+		args.putInt(ActionEvent.ARG_COMMAND, PHOTO_RESULT_CODE);
+		return ActionEvent.getActionDoCommand(args);
+	}
+
+	// END ACTION EVENT
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public static class PhotoProxyRowGuidComparator implements EqualityComparatorOf<PhotoProxy>{
 

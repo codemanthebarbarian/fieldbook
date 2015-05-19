@@ -33,7 +33,7 @@ import android.widget.ImageView;
 public class PhotoActivity extends Activity {
 
 	public static final String ARG_VIEW_STATE = "com.amecfw.sage.ui.PhotoActivity.viewState";
-	public static final String ARG_VIEW_PROXY_CACHE_KEY = "com.amecfw.sage.ui.PhotoActivity.proxy";
+	public static final String ARG_VIEW_PROXY_CACHE_KEY = "com.amecfw.sage.ui.PhotoService.proxy";
 	private static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
 
 	private ImageView imageView;
