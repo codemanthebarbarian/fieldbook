@@ -1,6 +1,7 @@
 package com.amecfw.sage.fieldbook;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,18 +23,25 @@ public class HomePage extends Fragment implements OnClickListener{
 	private TextView sulphurButton;
 	private TextView vegButton;
 	private TextView soilButton;
+	private TextView version;
 	
 	 @Override
-	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	        Bundle savedInstanceState) {
-		 	View view = inflater.inflate(R.layout.home_page, container, false);
-		 	sulphurButton = (TextView) view.findViewById(R.id.sulphurApp_welcomeMsg);
-		 	sulphurButton.setOnClickListener(this);
-		 	vegButton = (TextView) view.findViewById(R.id.vegApp_welcomeMsg);
-		 	vegButton.setOnClickListener(this);
-		 	soilButton = (TextView) view.findViewById(R.id.soilApp_welcomeMsg);
-		 	soilButton.setOnClickListener(this);
-	    return view;
+	 public View onCreateView(LayoutInflater inflater, ViewGroup container,
+		Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.home_page, container, false);
+		sulphurButton = (TextView) view.findViewById(R.id.sulphurApp_welcomeMsg);
+		sulphurButton.setOnClickListener(this);
+		vegButton = (TextView) view.findViewById(R.id.vegApp_welcomeMsg);
+		vegButton.setOnClickListener(this);
+		soilButton = (TextView) view.findViewById(R.id.soilApp_welcomeMsg);
+		soilButton.setOnClickListener(this);
+		 version = (TextView) view.findViewById(R.id.appVersion);
+		 try {
+			 version.setText(getActivity().getApplicationContext().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName);
+		 } catch (PackageManager.NameNotFoundException e) {
+			 // do nothing
+		 }
+		 return view;
 	}
 	
 	@Override

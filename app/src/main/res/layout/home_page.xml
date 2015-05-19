@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/app_version"
+        android:text="@string/notAvailable_na"
         android:textAppearance="?android:attr/textAppearanceSmall" />   
 
 </RelativeLayout>
