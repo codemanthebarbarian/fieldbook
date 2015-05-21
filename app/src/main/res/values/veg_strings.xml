@@ -13,6 +13,11 @@
     
     <!-- Menu Main -->
     <string name="menuMain_newProject">New Project</string>
+
+	<string-array name="veg_survey_types">
+		<item>Rare Plant</item>
+		<item>Transect</item>
+	</string-array>
     
     <!-- Rare Survey -->
     

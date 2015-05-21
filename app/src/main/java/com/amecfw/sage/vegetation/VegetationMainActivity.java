@@ -194,4 +194,14 @@ public class VegetationMainActivity extends Activity implements ProjectSiteList.
 		intent.putExtra(StationManagement.EXTRA_PROJECT_SITE_ID, projectSite.getId());
 		startActivity(intent);
 	}
+
+	private void doCategorySurvey(ProjectSite projectSite){
+		Intent intent = new Intent(this, StationManagement.class);
+		intent.putExtra(StationManagement.EXTRA_PROJECT_SITE_ID, projectSite.getId());
+		startActivity(intent);
+	}
+
+	private void doTransectSurvey(ProjectSite projectSite){
+		Intent intent = new Intent(this, StationManagement.class);
+	}
 }
