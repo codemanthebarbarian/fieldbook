@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.amecfw.sage.fieldbook.R;
+import com.amecfw.sage.fieldbook.StationManager;
+import com.amecfw.sage.fieldbook.SurveySelectorFragment;
 import com.amecfw.sage.model.ProjectSite;
 import com.amecfw.sage.model.ProjectSiteMeta;
 import com.amecfw.sage.model.SageApplication;
@@ -12,8 +14,10 @@ import com.amecfw.sage.model.service.ProjectSiteServices;
 import com.amecfw.sage.ui.ProjectSiteEdit;
 import com.amecfw.sage.ui.ProjectSiteList;
 import com.amecfw.sage.util.ApplicationUI;
+import com.amecfw.sage.util.OnItemSelectedHandler;
 import com.amecfw.sage.util.ViewState;
 import com.amecfw.sage.vegetation.rareplant.StationManagement;
+import com.amecfw.sage.vegetation.transect.TransectManagement;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -30,6 +34,7 @@ public class VegetationMainActivity extends Activity implements ProjectSiteList.
 	private ProjectSiteEdit.Proxy projectSiteEditProxy;
 	private ProjectSiteEdit.ViewModel viewModel;
 	private List<ProjectSite> projectSites;
+	private ProjectSite projectSite;
 	private ViewState viewState;
 	private MenuItem addbtn;
 	private MenuItem deletebtn;
@@ -190,8 +195,49 @@ public class VegetationMainActivity extends Activity implements ProjectSiteList.
 	@Override
 	public void onItemSelected(ProjectSite projectSite) {
 		if (projectSite == null) return;
+		this.projectSite = projectSite;
+		showSurveys();
+	}
+
+	private void showSurveys(){
+		ArrayList<SurveySelectorFragment.ViewModel> viewModels =
+				SurveySelectorFragment.generateViewModels(getResources().getStringArray(R.array.veg_survey_types));
+		Bundle args = new Bundle();
+		args.putParcelableArrayList(SurveySelectorFragment.ARG_ARRAY_LIST_VIEW_MODEL, viewModels);
+		SurveySelectorFragment surveySelectorFragment = new SurveySelectorFragment();
+		surveySelectorFragment.setArguments(args);
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		Fragment f = getFragmentManager().findFragmentByTag(ProjectSiteEdit.class.getName());
+		surveySelectorFragment.setOnItemSelectedHandler(surveySelectedHandler);
+		if(f != null) transaction.remove(f);
+		transaction.replace(R.id.vegetationManagement_containerA, surveySelectorFragment, SurveySelectorFragment.class.getName());
+		transaction.addToBackStack(null).commit();
+	}
+
+	private OnItemSelectedHandler<SurveySelectorFragment.ViewModel> surveySelectedHandler =
+			new OnItemSelectedHandler<SurveySelectorFragment.ViewModel>() {
+				@Override
+				public void onItemSelected(SurveySelectorFragment.ViewModel item) {
+					switch (item.id){
+						case 0:
+							doCategorySurvey(projectSite);
+							break;
+						case 1:
+							doTransectSurvey(projectSite);
+							break;
+					}
+				}
+			};
+
+	private void doCategorySurvey(ProjectSite projectSite){
 		Intent intent = new Intent(this, StationManagement.class);
 		intent.putExtra(StationManagement.EXTRA_PROJECT_SITE_ID, projectSite.getId());
+		startActivity(intent);
+	}
+
+	private void doTransectSurvey(ProjectSite projectSite){
+		Intent intent = new Intent(this, TransectManagement.class);
+		intent.putExtra(StationManager.EXTRA_PROJECT_SITE_ID, projectSite.getId());
 		startActivity(intent);
 	}
 }

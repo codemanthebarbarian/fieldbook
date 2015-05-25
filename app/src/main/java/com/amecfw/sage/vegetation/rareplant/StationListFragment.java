@@ -25,7 +25,7 @@ public class StationListFragment extends ListFragment {
 	private ListView list;
 	private List<Station> stations;
 	
-	void setStations(List<Station> stations){
+	public void setStations(List<Station> stations){
 		this.stations = stations;
 		if(adapter != null){
 			adapter.clear();
