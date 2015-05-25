@@ -45,4 +45,7 @@
 	    <item>Other</item>
 	</string-array>
 
+	<!-- Transect Survey -->
+	<string name="transectSurvey_activityName">Transect Survey</string>
+
 </resources>

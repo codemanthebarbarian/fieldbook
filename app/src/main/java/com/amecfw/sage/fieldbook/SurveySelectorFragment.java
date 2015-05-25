@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.amecfw.sage.util.ListAdapter;
 import com.amecfw.sage.util.OnItemSelectedHandler;
+import com.amecfw.sage.vegetation.rareplant.CategoryElementsListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +40,11 @@ public class SurveySelectorFragment extends DialogFragment {
     }
 
     private void initialize(Bundle args){
-        if(args == null) if(viewModels == null) viewModels = new ArrayList<>();
+        if(args == null && viewModels == null) viewModels = new ArrayList<>();
         else viewModels = args.getParcelableArrayList(ARG_ARRAY_LIST_VIEW_MODEL);
         adapter = new ViewModelAdapter(getActivity(), viewModels);
         list.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         list.setOnItemClickListener(itemClickListener);
     }
 
@@ -142,13 +145,27 @@ public class SurveySelectorFragment extends DialogFragment {
         }
     }
 
-    private class ViewModelAdapter extends ListAdapter<ViewModel>{
+    private static class ViewModelAdapter extends ListAdapter<ViewModel>{
 
         public ViewModelAdapter(Context context, List<ViewModel> viewModels){ super(context, viewModels); }
 
+        private static class ViewHolder{
+            public TextView survey;
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+            ViewHolder holder = null;
+            if(convertView == null){
+                LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = layoutInflater.inflate(android.R.layout.simple_list_item_1, null);
+                holder = new ViewHolder();
+                holder.survey = (TextView) convertView.findViewById(android.R.id.text1);
+                convertView.setTag(holder);
+            } else holder = (ViewHolder) convertView.getTag();
+            ViewModel item = get(position);
+            holder.survey.setText(item.text);
+            return convertView;
         }
     }
 }

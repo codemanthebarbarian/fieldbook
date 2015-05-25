@@ -43,6 +43,10 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+        <activity android:name="com.amecfw.sage.vegetation.transect.TransectManagement"
+            android:label="@string/transectSurvey_activityName"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.amecfw.sage.vegetation.VegetationMainActivity"/>
 
         <!-- sulphur -->
         <activity

@@ -14,7 +14,6 @@ import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.persistence.DaoSession;
 import com.amecfw.sage.ui.CancelSaveExitDialog;
 import com.amecfw.sage.util.ViewState;
-import com.amecfw.sage.vegetation.VegetationGlobals;
 import com.amecfw.sage.vegetation.rareplant.StationListFragment;
 
 import java.util.List;
@@ -24,27 +23,26 @@ import java.util.List;
  */
 public abstract class StationManager extends Activity implements ViewState.ViewStateListener {
     public static final String EXTRA_PROJECT_SITE_ID = "fieldbook.StationManager.projectSite";
-    private static final String ARG_CONTAINER_STATE = "fieldbook.StationManager.containerState";
-    private static final String ARG_VIEW_STATE = "fieldbook.StationManager.viewState";
+    protected static final String ARG_CONTAINER_STATE = "fieldbook.StationManager.containerState";
+    protected static final String ARG_VIEW_STATE = "fieldbook.StationManager.viewState";
 
 
-    private static final int CONTAINER_STATE_ONE = 1;
-    private static final int CONTAINER_STATE_TWO = 2;
+    protected static final int CONTAINER_STATE_ONE = 1;
+    protected static final int CONTAINER_STATE_TWO = 2;
 
-    private int containerState;
-    private ViewState viewState;
-    private ProjectSite projectSite;
-    private List<Station> stations;
-    private MenuItem addBtn;
-    private MenuItem deleteBtn;
-    private MenuItem saveBtn;
+    protected int containerState;
+    protected ViewState viewState;
+    protected ProjectSite projectSite;
+    protected List<Station> stations;
+    protected MenuItem addBtn;
+    protected MenuItem deleteBtn;
+    protected MenuItem saveBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(SageApplication.getInstance().getThemeID());
         this.setContentView(R.layout.station_management);
-        this.getActionBar().setIcon(R.drawable.leaf);
         containerState = findViewById(R.id.rareplant_stationManagement_containerB) == null ? CONTAINER_STATE_ONE : CONTAINER_STATE_TWO;
         if(savedInstanceState == null) initialize(getIntent().getExtras());
         else intializeFromSavedInstance(savedInstanceState);
