@@ -2,6 +2,7 @@ package com.amecfw.sage.fieldbook;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,16 +13,19 @@ import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.service.ProjectSiteServices;
 import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.persistence.DaoSession;
+import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.ui.CancelSaveExitDialog;
+import com.amecfw.sage.util.ActionEvent;
 import com.amecfw.sage.util.ViewState;
 import com.amecfw.sage.vegetation.rareplant.StationListFragment;
+import com.amecfw.sage.vegetation.transect.TransectEditFragment;
 
 import java.util.List;
 
 /**
  * Created by amec on 2015-05-21.
  */
-public abstract class StationManager extends Activity implements ViewState.ViewStateListener {
+public abstract class StationManager<TEditFragment extends StationEditFragmentBase> extends Activity implements ViewState.ViewStateListener {
     public static final String EXTRA_PROJECT_SITE_ID = "fieldbook.StationManager.projectSite";
     protected static final String ARG_CONTAINER_STATE = "fieldbook.StationManager.containerState";
     protected static final String ARG_VIEW_STATE = "fieldbook.StationManager.viewState";
@@ -30,6 +34,7 @@ public abstract class StationManager extends Activity implements ViewState.ViewS
     protected static final int CONTAINER_STATE_ONE = 1;
     protected static final int CONTAINER_STATE_TWO = 2;
 
+    protected StationProxy stationProxy;
     protected int containerState;
     protected ViewState viewState;
     protected ProjectSite projectSite;
@@ -86,7 +91,25 @@ public abstract class StationManager extends Activity implements ViewState.ViewS
         containerState = savedInstanceState.getInt(ARG_CONTAINER_STATE, CONTAINER_STATE_TWO);
     }
 
-    protected abstract void loadEditFragment();
+    protected void loadEditFragment(){
+        Fragment f = getFragmentManager().findFragmentByTag(TransectEditFragment.class.getName());
+        stationProxy = null;
+        if(f== null){
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            TEditFragment editFragment = new TEditFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(TransectEditFragment.ARV_VIEW_STATE, ViewState.getViewStateAdd());
+            transaction.add(R.id.rareplant_stationManagement_containerB, editFragment, TransectEditFragment.class.getName());
+            transaction.commit();
+            saveBtn.setVisible(true);
+        }
+        else {
+            Bundle args = new Bundle();
+            args.putInt(ActionEvent.ARG_COMMAND, TransectEditFragment.COMMAND_NOTIFY_NEW);
+            ((TransectEditFragment) f).actionPerformed(ActionEvent.getActionDoCommand(args));
+        }
+        viewState.setStateAdd();
+    }
 
     /**
      * Saves the current station in the station edit fragment
@@ -109,6 +132,35 @@ public abstract class StationManager extends Activity implements ViewState.ViewS
      */
     protected abstract void doEdit(Station station);
 
+    private void doEdit(Class<TEditFragment> editFragmentClass, Station station){
+        //show the selected item for edit
+        StationService ss = new StationService(SageApplication.getInstance().getDaoSession());
+        stationProxy = ss.getStationProxy(station);
+        //convert to viewmodel
+        StationEditFragment.ViewModel vm = new StationEditFragment.ViewModel();
+        CategorySurveyService.updateFromProxy(stationProxy, vm, SageApplication.getInstance().getDaoSession());
+        Bundle args = new Bundle();
+        args.putParcelable(StationEditFragment.ARG_VIEW_MODEL, vm);
+        Fragment f =  getFragmentManager().findFragmentByTag(editFragmentClass.getName());
+        if(f == null){
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            TEditFragment editFragment = new StationEditFragment();
+            editFragment.setPhotos(stationProxy.getPhotos());
+            args.putParcelable(StationEditFragment.ARV_VIEW_STATE, ViewState.getViewStateEdit());
+            editFragment.setArguments(args);
+            transaction.add(R.id.rareplant_stationManagement_containerB, editFragment, editFragmentClass.getName());
+            transaction.commit();
+        }else{
+            StationEditFragment editFragment = (StationEditFragment) f;
+            if(isDirty());//TODO: should prompt user to save changes
+            if(cancel) return;
+            args.putInt(ActionEvent.ARG_COMMAND, StationEditFragment.COMMAND_EDIT);
+            editFragment.actionPerformed(ActionEvent.getActionDoCommand(args));
+            editFragment.setPhotos(stationProxy.getPhotos());
+        }
+        saveBtn.setVisible(true);
+    }
+
     /**
      * Cancel any editing currently being done without saving chages
      */
@@ -117,9 +169,22 @@ public abstract class StationManager extends Activity implements ViewState.ViewS
     /**
      * is the current item in the station edit fragment in a changed state that
      * has not been saved to the database
+     * just make a call to isDirty(Class[TEditFragment])
      * @return true if the station has unsaved changes otherwise false
      */
     protected abstract boolean isDirty();
+
+    /**
+     * is the current item in the station edit fragment in a changed state that
+     * has not been saved to the database
+     * @param editFragment the class type for the edit fragment
+     * @return true if the station has unsaved changes otherwise false
+     */
+    protected boolean isDirty(Class<TEditFragment> editFragment){
+        Fragment f = getFragmentManager().findFragmentByTag(editFragment.getName());
+        if(f == null) return false;
+        return ((TEditFragment)f).isDirty();
+    }
 
     /**
      * Used in updateStationList to get the stationtypes managed by the implementing activity

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageButton
+            android:id="@+id/vegTransect_stationEdit_locationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="Select Location"
+            android:src="@android:drawable/ic_menu_mylocation" />
+        <EditText
+            android:id="@+id/vegTransect_stationEdit_stationName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@id/vegTransect_stationEdit_locationButton"
+            android:layout_toStartOf="@id/vegTransect_stationEdit_locationButton"
+            android:hint="@string/vegTransectStationListEdit_stationName"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:maxLength="50"
+            android:maxLines="1"/>
+        <TextView
+            android:id="@+id/vegTransect_stationEdit_coordinateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vegTransect_stationEdit_locationButton"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/notAvailable_na"/>
+
+        <ImageButton
+            android:id="@+id/vegTransect_stationEdit_FieldLeadimageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/vegTransect_stationEdit_coordinateText"
+            android:contentDescription="@string/vegTransectStationListEdit_FieldLead"
+            android:src="@android:drawable/ic_search_category_default" />
+        <TextView
+            android:id="@+id/vegTransect_stationEdit_txtFieldLead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@id/vegTransect_stationEdit_FieldLeadimageButton"
+            android:layout_marginTop="30dp"
+            android:text="@string/vegTransectStationListEdit_FieldLead"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        <EditText
+            android:id="@+id/vegTransect_stationEdit_FieldLead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/vegTransect_stationEdit_txtFieldLead"
+            android:layout_toStartOf="@id/vegTransect_stationEdit_FieldLeadimageButton"
+            android:layout_toEndOf="@id/vegTransect_stationEdit_txtFieldLead"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:hint=""
+            android:maxLines="1"/>
+
+        <TextView
+            android:id="@+id/vegTransect_stationEdit_txtFieldCrew"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/vegTransect_stationEdit_txtFieldLead"
+            android:layout_below="@id/vegTransect_stationEdit_txtFieldLead"
+            android:layout_marginTop="20dp"
+            android:layout_toStartOf="@+id/vegTransect_stationEdit_FieldCrew"
+            android:text="@string/vegTransectStationListEdit_FieldCrew"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        <ImageButton
+            android:id="@+id/vegTransect_stationEdit_FieldCrewimageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/vegTransect_stationEdit_FieldCrew"
+            android:layout_alignParentEnd="true"
+            android:src="@android:drawable/ic_search_category_default"
+            android:contentDescription="@string/vegTransectStationListEdit_FieldCrew" />
+        <EditText
+            android:id="@+id/vegTransect_stationEdit_FieldCrew"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/vegTransect_stationEdit_txtFieldCrew"
+            android:layout_alignStart="@id/vegTransect_stationEdit_FieldLead"
+            android:layout_toStartOf="@id/vegTransect_stationEdit_FieldCrewimageButton"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:hint=""
+            android:maxLines="1" />
+
+        <EditText
+            android:id="@+id/vegTransect_stationEdit_comments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vegTransect_stationEdit_FieldCrewimageButton"
+            android:hint="@string/comments"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/vegTransect_stationEdit_setDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vegTransect_stationEdit_comments"
+            android:layout_alignParentEnd="true"
+            android:src="@android:drawable/ic_menu_today"
+            android:contentDescription="Set Time"/>
+        <TextView
+            android:id="@+id/vegTransect_stationEdit_dateTimeCollected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@id/vegTransect_stationEdit_setDateTime"
+            android:layout_toStartOf="@id/vegTransect_stationEdit_setDateTime"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/notAvailable_na"/>
+
+        <ImageButton
+            android:id="@+id/vegTransect_stationEdit_takePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vegTransect_stationEdit_setDateTime"
+            android:layout_alignParentEnd="true"
+            android:src="@android:drawable/ic_menu_camera"
+            android:contentDescription="Take Photo"/>
+        <FrameLayout
+            android:id="@+id/vegTransect_stationEdit_photoFragment"
+            android:layout_height="100dp"
+            android:layout_width="wrap_content"
+            android:layout_alignTop="@id/vegTransect_stationEdit_takePhoto"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/vegTransect_stationEdit_takePhoto"/>
+    </RelativeLayout>
+</ScrollView>
