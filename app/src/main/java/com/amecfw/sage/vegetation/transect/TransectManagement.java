@@ -23,33 +23,23 @@ public class TransectManagement extends StationManager<TransectEditFragment> {
     }
 
     @Override
-    protected void doSave() {
-
+    protected TransectEditFragment getEditFragmentInstance() {
+        return new TransectEditFragment();
     }
 
     @Override
-    protected void doAdd() {
+    protected Class<TransectEditFragment> getEditFragmentClass() {
+        return TransectEditFragment.class;
+    }
+
+    @Override
+    protected void doSave() {
 
     }
 
     @Override
     protected void doDelete() {
 
-    }
-
-    @Override
-    protected void doEdit(Station station) {
-
-    }
-
-    @Override
-    protected void doCancel() {
-
-    }
-
-    @Override
-    protected boolean isDirty() {
-        return isDirty(TransectEditFragment.class);
     }
 
     @Override

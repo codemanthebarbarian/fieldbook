@@ -23,6 +23,7 @@ import com.amecfw.sage.model.service.GpsLoggingService;
 import com.amecfw.sage.model.service.LocationService;
 import com.amecfw.sage.model.service.PhotoService;
 import com.amecfw.sage.proxy.PhotoProxy;
+import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.ui.DateTimePicker;
 import com.amecfw.sage.ui.PhotoActivity;
 import com.amecfw.sage.ui.PhotoHorizontalListFragment;
@@ -60,20 +61,19 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
     protected List<PhotoProxy> photos;
 
     protected void initializeBase(View view) {
-        stationName = (EditText) view.findViewById(R.id.rareplant_stationEdit_stationName);
+        stationName = (EditText) view.findViewById(R.id.stationEditBase_layout_stationName);
         stationName.addTextChangedListener(textWatcher);
-        coordinateText = (TextView) view.findViewById(R.id.rareplant_stationEdit_coordinateText);
-        setDateTime = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_setDateTime);
+        coordinateText = (TextView) view.findViewById(R.id.stationEditBase_layout_coordinateText);
+        setDateTime = (ImageButton) view.findViewById(R.id.stationEditBase_layout_setDateTime);
         setDateTime.setOnClickListener(setDateTimeListener);
-        comments = (EditText) view.findViewById(R.id.rareplant_stationEdit_comments);
+        comments = (EditText) view.findViewById(R.id.stationEditBase_layout_comments);
         comments.addTextChangedListener(textWatcher);
-        dateTimeCollected = (TextView) view.findViewById(R.id.rareplant_stationEdit_dateTimeCollected);
+        dateTimeCollected = (TextView) view.findViewById(R.id.stationEditBase_layout_dateTimeCollected);
         dateTimeCollected.addTextChangedListener(textWatcher);
-        getLocation = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_locationButton);
+        getLocation = (ImageButton) view.findViewById(R.id.stationEditBase_layout_locationButton);
         getLocation.setOnClickListener(gpsButtonClickListener);
-        getPhoto = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_takePhoto);
+        getPhoto = (ImageButton) view.findViewById(R.id.stationEditBase_layout_takePhoto);
         getPhoto.setOnClickListener(photoListener);
-        notify = true;
     }
 
     /**
@@ -110,9 +110,17 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
         PhotoHorizontalListFragment fragment = new PhotoHorizontalListFragment();
         fragment.setProxies(photos);
         getFragmentManager().beginTransaction()
-                .add(R.id.rarePlant_stationEdit_photoFragment, fragment, PhotoHorizontalListFragment.class.getName())
+                .add(R.id.stationEditBase_layout_photoFragment, fragment, PhotoHorizontalListFragment.class.getName())
                 .commit();
     }
+
+    /**
+     * creates a new TViewModel from the provided StationProxy. If the proxy is null. creates blank
+     * TViewModel
+     * @param stationProxy the proxy to create from or null to create a default
+     * @return a TViewModel
+     */
+    protected abstract  TViewModel createViewModel(StationProxy stationProxy);
 
     public abstract TViewModel getViewModel();
 
@@ -206,6 +214,7 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
             gpsHandler.destroy();
             gpsHandler = null;
         }
+        super.onDestroy();
     }
 
     protected void updateLocationText(Location location){
@@ -351,7 +360,7 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
     }
 
     protected void addPhoto(PhotoProxy proxy){
-        if(photos == null) photos = new ArrayList<PhotoProxy>();
+        if(photos == null) photos = new ArrayList<>();
         photos.add(proxy);
         onEdit();
         Fragment fragment = getFragmentManager().findFragmentByTag(PhotoHorizontalListFragment.class.getName());

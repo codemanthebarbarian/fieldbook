@@ -15,8 +15,11 @@ import com.amecfw.sage.fieldbook.StationEditFragmentBase;
 import com.amecfw.sage.model.FieldDescriptor;
 import com.amecfw.sage.model.GroupObservation;
 import com.amecfw.sage.model.ObservationDescriptor;
+import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.service.DescriptorServices;
+import com.amecfw.sage.model.service.StationService;
+import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.ui.ObservationDialogFragment;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.OnExitListener;
@@ -38,18 +41,29 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.veg_transect_edit, container);
+        notify = false;
+        View view = inflater.inflate(R.layout.veg_transect_edit, container, false);
         super.initializeBase(view);
-        fieldLead = (ImageButton)view.findViewById(R.id.rareplant_stationEdit_FieldLeadimageButton);
+        fieldLead = (ImageButton)view.findViewById(R.id.transectEdit_layout_FieldLeadimageButton);
         fieldLead.setOnClickListener(fieldLeadListener);
-        fieldLeadTextField = (EditText)view.findViewById(R.id.rareplant_stationEdit_FieldLead);
+        fieldLeadTextField = (EditText)view.findViewById(R.id.transectEdit_layout_FieldLead);
         fieldLeadTextField.addTextChangedListener(textWatcher);
-        fieldCrew = (ImageButton) view.findViewById(R.id.rareplant_stationEdit_FieldCrewimageButton);
+        fieldCrew = (ImageButton) view.findViewById(R.id.transectEdit_layout_FieldCrewimageButton);
         fieldCrew.setOnClickListener(fieldCrewListener);
-        fieldCrewTextField = (EditText)view.findViewById(R.id.rareplant_stationEdit_FieldCrew);
+        fieldCrewTextField = (EditText)view.findViewById(R.id.transectEdit_layout_FieldCrew);
         fieldCrewTextField.addTextChangedListener(textWatcher);
         initialize(savedInstanceState == null ? getArguments() : savedInstanceState);
+        notify = true;
         return view;
+    }
+
+    @Override
+    protected ViewModel createViewModel(StationProxy stationProxy) {
+        ViewModel vm = new ViewModel();
+        if(stationProxy == null) return vm;
+        new StationService(SageApplication.getInstance().getDaoSession()).updateFromProxy(stationProxy, vm);
+        vm.location = stationProxy.getGpsLocation();
+        return vm;
     }
 
     @Override
