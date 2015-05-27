@@ -28,6 +28,7 @@ import com.amecfw.sage.ui.DateTimePicker;
 import com.amecfw.sage.ui.PhotoActivity;
 import com.amecfw.sage.ui.PhotoHorizontalListFragment;
 import com.amecfw.sage.util.ActionEvent;
+import com.amecfw.sage.util.ApplicationUI;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.util.ViewState;
 
@@ -337,6 +338,7 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
     protected View.OnClickListener photoListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            ApplicationUI.hideSoftKeyboard(getActivity());
             PhotoProxy proxy = PhotoService.createProxy(null);
             SageApplication.getInstance().setItem(PhotoActivity.ARG_VIEW_PROXY_CACHE_KEY, proxy);
             Intent intent = new Intent(getActivity(), PhotoActivity.class);
@@ -391,6 +393,7 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
     protected View.OnClickListener setDateTimeListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            ApplicationUI.hideSoftKeyboard(getActivity());
             DateTimePicker.DatePicker datePicker = new DateTimePicker.DatePicker();
             datePicker.setOnDateSelectedListener(dateSelectedListener);
             datePicker.show(getFragmentManager(), DateTimePicker.DatePicker.class.getName());

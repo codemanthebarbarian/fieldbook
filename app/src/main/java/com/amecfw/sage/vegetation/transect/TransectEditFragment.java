@@ -21,6 +21,7 @@ import com.amecfw.sage.model.service.DescriptorServices;
 import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.ui.ObservationDialogFragment;
+import com.amecfw.sage.util.ApplicationUI;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.util.ViewState;
@@ -105,6 +106,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
 
         @Override
         public void onClick(View v) {
+            ApplicationUI.hideSoftKeyboard(getActivity());
             GroupObservation g = new GroupObservation();
             g.setAllowableValues("ML,LT,CC,OJ,KL,DP");
             Bundle bundle = new Bundle();
@@ -125,6 +127,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
     private View.OnClickListener fieldCrewListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            ApplicationUI.hideSoftKeyboard(getActivity());
             GroupObservation g = new GroupObservation();
             g.setAllowableValues("ML,LT,CC,OJ,KL,DP");
             Bundle bundle = new Bundle();
