@@ -39,6 +39,12 @@ private DaoSession session;
 		}
 		save(station);
 	}
+
+	public void save(Station station, Station root){
+		if(root.getId() == null || root.getId() < 1) save(root);
+		station.setStation(root);
+		save(station);
+	}
 	
 	public void save(Station station){
 		station.setId(null);
@@ -66,7 +72,14 @@ private DaoSession session;
 		session.getStationDao().update(station);
 		MetaDataService.update(station, session.getStationMetaDao());
 	}
-	
+
+	public void update(Station station, Station root){
+		if(root == null) station.setStation(null);
+		else if(station.getStation() == null) root.setStation(root);
+		else if(station.getRootID() != root.getId()) station.setStation(root);
+		update(station);
+	}
+
 	public void update(Station station){
 		session.getStationDao().update(station);
 		MetaDataService.update(station, session.getStationMetaDao());
@@ -181,7 +194,7 @@ private DaoSession session;
 			db.setTransactionSuccessful(); 
 			result = true;
 		} catch(Exception ex){
-			Log.e("sulphurFieldbook.collectionForm.Services",ex.getMessage() == null ? ex.getClass().getName() : ex.getMessage());
+			Log.e("StationService",ex.getMessage() == null ? ex.getClass().getName() : ex.getMessage());
 			result = false;
 		}finally{
 			db.endTransaction();
@@ -199,6 +212,8 @@ private DaoSession session;
 			new LocationService(session).saveOrUpdateProxy(proxy.getLocationProxy());
 			proxy.getModel().setLocation(proxy.getLocationProxy().getModel());
 		}
+		//If there is a root station, link it
+		if(proxy.getRoot() != null) proxy.getModel().setStation(proxy.getRoot().getModel());
 		//Save the station
 		save(proxy.getModel());
 		//Save observations

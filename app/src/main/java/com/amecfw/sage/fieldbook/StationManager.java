@@ -24,9 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by amec on 2015-05-21.
+ *
  */
-public abstract class StationManager<TEditFragment extends StationEditFragmentBase> extends Activity implements ViewState.ViewStateListener {
+public abstract class StationManager<TEditFragment extends StationEditFragmentBase> extends Activity
+        implements ViewState.ViewStateListener, StationListFragment.OnItemSelectedHandler {
     public static final String EXTRA_PROJECT_SITE_ID = "fieldbook.StationManager.projectSite";
     protected static final String ARG_CONTAINER_STATE = "fieldbook.StationManager.containerState";
     protected static final String ARG_VIEW_STATE = "fieldbook.StationManager.viewState";
@@ -61,7 +62,7 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
     protected void setIntitalView(Bundle savedInstanceState){
         viewState = ViewState.getViewStateView();
         viewState.addListener(this);
-        stations = new StationService(SageApplication.getInstance().getDaoSession()).find(projectSite, getStationType());
+        stations = getStations();
         if (stations == null) stations = new ArrayList<>();
         StationListFragment stationList = new StationListFragment();
         stationList.setStationLongClickSelectedHandler(stationLongClickSelectedHandler);
@@ -99,7 +100,7 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
         if(args == null) return;
         DaoSession session = SageApplication.getInstance().getDaoSession();
         projectSite = new ProjectSiteServices(session).getProjectSite(args.getLong(EXTRA_PROJECT_SITE_ID));
-        stations = new StationService(session).find(projectSite);
+        stations = getStations();
         viewState = ViewState.getViewStateView();
     }
 
@@ -243,13 +244,23 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
 
     /**
      * updates the stations in the station list fragment from the database using
-     * find(ProjectSite projectSite, String stationType) in the StationService.
+     * getStations() in the StationService.
      * if using mixed station types, override
      */
     protected void updateStationList(){
-        stations = new StationService(SageApplication.getInstance().getDaoSession()).find(projectSite, getStationType());
+        stations = getStations();
         Fragment f = getFragmentManager().findFragmentByTag( StationListFragment.class.getName());
         if(f != null) ((StationListFragment) f).setStations(stations);
+    }
+
+    /**
+     * Gets the stations corrosponding to the survey.
+     * The default uses StationService.find(projectSite, getStationType())
+     * In you need stations based on a different query, override this method.
+     * @return a list of stations
+     */
+    protected List<Station> getStations(){
+        return new StationService(SageApplication.getInstance().getDaoSession()).find(projectSite, getStationType());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -47,8 +47,14 @@
 
 	<!-- Transect Survey -->
 	<string name="transectSurvey_activityName">Transect Survey</string>
-	<string name="vegTransectStationListEdit_stationName">Station Name</string>
+	<string name="vegTransectStationListEdit_stationName">Transect Name</string>
 	<string name="vegTransectStationListEdit_FieldLead">Field Lead:</string>
 	<string name="vegTransectStationListEdit_FieldCrew">Field Crew:</string>
+
+	<!-- Transect Plot -->
+	<string name="transectPlot_Title">Transect %s Plots</string>
+	<string name="transectPlotSurvey_activityName">Transect Plot</string>
+	<string name="transectPlotEdit_stationName">Plot Name</string>
+	<string name="transectPlotEdit_ecoSite">EcoSite:</string>
 
 </resources>

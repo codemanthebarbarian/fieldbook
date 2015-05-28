@@ -2,6 +2,7 @@ package com.amecfw.sage.vegetation.transect;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.amecfw.sage.fieldbook.R;
@@ -18,6 +19,7 @@ import com.amecfw.sage.util.ApplicationUI;
 import com.amecfw.sage.util.CollectionOperations;
 import com.amecfw.sage.util.ViewState;
 import com.amecfw.sage.vegetation.VegetationGlobals;
+import com.amecfw.sage.vegetation.rareplant.StationListFragment;
 
 import java.util.List;
 
@@ -81,5 +83,13 @@ public class TransectManagement extends StationManager<TransectEditFragment> {
         return VegetationGlobals.SURVEY_TRANSECT;
     }
 
+    @Override
+    public void onItemSelected(Station station) {
+        if (station == null)return;
+        SageApplication.getInstance().setItem(PlotManagement.ARG_TRANSECT_CACHE, station);
+        Intent intent = new Intent(this, PlotManagement.class);
+        intent.putExtra(PlotManagement.ARG_TRANSECT_CACHE, PlotManagement.ARG_TRANSECT_CACHE);
+        startActivity(intent);
+    }
 
 }
