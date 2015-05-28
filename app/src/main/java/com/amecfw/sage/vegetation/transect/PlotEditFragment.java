@@ -21,6 +21,7 @@ import com.amecfw.sage.model.service.DescriptorServices;
 import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.ui.ObservationDialogFragment;
+import com.amecfw.sage.util.ApplicationUI;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.OnExitListener;
 import com.amecfw.sage.util.ViewState;
@@ -96,6 +97,7 @@ public class PlotEditFragment extends StationEditFragmentBase<PlotEditFragment.V
     private View.OnClickListener ecoSiteListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            ApplicationUI.hideSoftKeyboard(getActivity());
             GroupObservation g = new GroupObservation();
             g.setAllowableValues("a1,b1,c1,c2,wetland 1, wetland 2");
             Bundle bundle = new Bundle();

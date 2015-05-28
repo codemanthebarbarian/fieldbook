@@ -31,6 +31,7 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
     public static final String EXTRA_PROJECT_SITE_ID = "fieldbook.StationManager.projectSite";
     protected static final String ARG_CONTAINER_STATE = "fieldbook.StationManager.containerState";
     protected static final String ARG_VIEW_STATE = "fieldbook.StationManager.viewState";
+    protected static final String ARG_STATIONS_CACHE = "fieldbook.StationManager.stations";
 
 
     protected static final int CONTAINER_STATE_ONE = 1;
@@ -105,8 +106,10 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
     }
 
     protected void intializeFromSavedInstance(Bundle savedInstanceState){
+        DaoSession session = SageApplication.getInstance().getDaoSession();
         viewState = savedInstanceState.getParcelable(ARG_VIEW_STATE);
         containerState = savedInstanceState.getInt(ARG_CONTAINER_STATE, CONTAINER_STATE_TWO);
+        projectSite = new ProjectSiteServices(session).getProjectSite(savedInstanceState.getLong(EXTRA_PROJECT_SITE_ID));
     }
 
 //    protected void loadEditFragment(){
@@ -271,7 +274,7 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_VIEW_STATE, viewState);
         outState.putInt(ARG_CONTAINER_STATE, containerState);
-        outState.putLong(EXTRA_PROJECT_SITE_ID, projectSite.getId());
+        if(projectSite != null) outState.putLong(EXTRA_PROJECT_SITE_ID, projectSite.getId());
     }
 
     @Override
@@ -303,12 +306,12 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
         @Override
         public void onSave(CancelSaveExitDialog dialog) {
             doSave();
-            doAdd();
+            showAdd();
         }
 
         @Override
         public void onExit(CancelSaveExitDialog dialog) {
-            doAdd();
+            showAdd();
         }
     };
 

@@ -16,6 +16,7 @@ import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.util.ApplicationUI;
 import com.amecfw.sage.util.CollectionOperations;
 import com.amecfw.sage.vegetation.VegetationGlobals;
+import com.amecfw.sage.vegetation.rareplant.CategorySurvey;
 
 import java.util.List;
 
@@ -36,6 +37,12 @@ public class PlotManagement extends StationManager<PlotEditFragment> {
         super.onCreate(savedInstanceState);
         this.getActionBar().setIcon(R.drawable.leaf);
         setTitle(getResources().getString(R.string.transectPlot_Title, transect.getName()));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        SageApplication.getInstance().setItem(ARG_TRANSECT_CACHE, transect);
     }
 
     @Override
@@ -98,10 +105,10 @@ public class PlotManagement extends StationManager<PlotEditFragment> {
 
     @Override
     public void onItemSelected(Station station) {
-        //if (station == null)return;
-        //SageApplication.getInstance().setItem(PlotManagement.ARG_TRANSECT_CACHE, station);
-        //Intent intent = new Intent(this, PlotManagement.class);
-        //intent.putExtra(PlotManagement.ARG_TRANSECT_CACHE, PlotManagement.ARG_TRANSECT_CACHE);
-        //startActivity(intent);
+        if (station == null)return;
+        SageApplication.getInstance().setItem(CategorySurvey.ARG_STATION, station);
+        Intent intent = new Intent(this, CategorySurvey.class);
+        intent.putExtra(CategorySurvey.ARG_STATION, CategorySurvey.ARG_STATION);
+        startActivity(intent);
     }
 }

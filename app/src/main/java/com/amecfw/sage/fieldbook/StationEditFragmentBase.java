@@ -194,6 +194,7 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
                         break;
                     case COMMAND_NOTIFY_NEW:
                         TViewModel vm = args.getParcelable(ARG_VIEW_MODEL);
+                        if(vm == null) vm = createViewModel(null);
                         setViewModel(vm);
                         Calendar now = Calendar.getInstance();
                         setDateCollected(now);
