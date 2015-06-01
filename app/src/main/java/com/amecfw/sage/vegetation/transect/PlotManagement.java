@@ -3,6 +3,8 @@ package com.amecfw.sage.vegetation.transect;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.amecfw.sage.fieldbook.R;
 import com.amecfw.sage.fieldbook.StationManager;
@@ -28,6 +30,7 @@ public class PlotManagement extends StationManager<PlotEditFragment> {
     public static final String ARG_TRANSECT_CACHE = "vegetation.transect.PlotManagement.transectProxy";
     private Station transect;
     private StationProxy root;
+    private MenuItem endTransect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,32 @@ public class PlotManagement extends StationManager<PlotEditFragment> {
         super.onCreate(savedInstanceState);
         this.getActionBar().setIcon(R.drawable.leaf);
         setTitle(getResources().getString(R.string.transectPlot_Title, transect.getName()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (! super.onOptionsItemSelected(item) &&  item.getItemId() == endTransect.getItemId()){
+            onEndTransect();
+            return true;
+        }
+        return false;
+    }
+
+    private void onEndTransect(){
+        if(isDirty()) doSave();
+        SageApplication.getInstance().setItem(ARG_TRANSECT_CACHE, transect);
+        Intent intent = new Intent();
+        intent.putExtra(ARG_TRANSECT_CACHE, ARG_TRANSECT_CACHE);
+        setResult(RESULT_OK, intent);
+        this.finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (super.onCreateOptionsMenu(menu)){
+            endTransect = menu.add(R.string.vegTransectStationListEdit_endTransect);
+        }
+        return true;
     }
 
     @Override

@@ -84,6 +84,10 @@ private DaoSession session;
 		session.getStationDao().update(station);
 		MetaDataService.update(station, session.getStationMetaDao());
 	}
+
+	public Station getStation(Long stationId){
+		return session.getStationDao().load(stationId);
+	}
 	
 	public List<Station> find(Location location, ProjectSite projectSite){
 		StationDao dao = session.getStationDao();
