@@ -7,13 +7,16 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.amecfw.sage.fieldbook.R;
 import com.amecfw.sage.fieldbook.StationEditFragmentBase;
 import com.amecfw.sage.model.FieldDescriptor;
+import com.amecfw.sage.model.ObservationDescriptor;
 import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.service.DescriptorServices;
+import com.amecfw.sage.model.service.LocationService;
 import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.util.Convert;
@@ -23,14 +26,21 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * Created by amec on 2015-06-01.
+ *
  */
 public class TransectEndEditFragment extends StationEditFragmentBase<TransectEndEditFragment.ViewModel> {
+
+    android.location.Location tranLoc;
+
+    private EditText tranDir;
+    private EditText tranLength;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         notify = false;
-        View view = inflater.inflate(R.layout.veg_trasect_plot_edit, container, false);
+        View view = inflater.inflate(R.layout.veg_transect_end_edit, container, false);
+        tranDir = (EditText) view.findViewById(R.id.transectEndEdit_layout_direction);
+        tranLength = (EditText) view.findViewById(R.id.transectEndEdit_layout_length);
         super.initializeBase(view);
         initialize(savedInstanceState == null ? getArguments() : savedInstanceState);
         notify = true;
@@ -55,6 +65,8 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
         viewModel.comments = Convert.toStringOrNull(comments);
         viewModel.timeZone = timeZone.getID();
         viewModel.location = location;
+        viewModel.length = Convert.toStringOrNull(tranLength);
+        viewModel.direction = Convert.toStringOrNull(tranDir);
         return viewModel;
     }
 
@@ -71,10 +83,22 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
         comments.setText(viewModel.comments);
         if(viewModel.timeZone != null) timeZone = TimeZone.getTimeZone(viewModel.timeZone);
         setDateTimeCollected();
+        tranLoc = viewModel.transectLocation;
         location = viewModel.location;
         updateLocationText(location);
+        tranDir.setText(viewModel.direction);
+        tranLength.setText(viewModel.length);
         mIsDirty = false;
         notify = true;
+    }
+
+    @Override
+    protected void updateLocationText(Location location){
+        super.updateLocationText(location);
+        if(tranLoc != null && location != null){
+            tranDir.setText(Convert.toStringOrNull(tranLoc.bearingTo(location)));
+            tranLength.setText(Convert.toStringOrNull(tranLoc.distanceTo(location)));
+        }
     }
 
     public static class ViewModel implements com.amecfw.sage.proxy.ViewModel {
@@ -91,9 +115,14 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
         public String timeZone;
         @FieldDescriptor(clazz = Station.class, targetGetter = "getDescription", targetSetter = "setDescription")
         public String comments;
+        @ObservationDescriptor(fieldName="direction", observationType = "Direction", defaultValue = "not recorded")
+        public String direction;
+        @ObservationDescriptor(fieldName="length", observationType = "Length", defaultValue = "not recorded")
+        public String length;
         public String[] photos;
         public android.location.Location location;
         public Long transectId;
+        public android.location.Location transectLocation;
 
         public static final Parcelable.Creator<ViewModel> CREATOR =
                 new Parcelable.Creator<ViewModel>() {
@@ -111,10 +140,13 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
             this.timeCreated = new Date(in.readLong());
             this.timeZone = in.readString();
             this.comments = in.readString();
+            this.direction = in.readString();
+            this.length = in.readString();
             this.transectId = in.readLong();
             photos = new String[in.readInt()];
             in.readStringArray(photos);
             this.location = in.readParcelable(Location.class.getClassLoader());
+            this.transectLocation = in.readParcelable(Location.class.getClassLoader());
         }
 
         @Override
@@ -124,10 +156,13 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
             dest.writeLong(timeCreated.getTime());
             dest.writeString(timeZone);
             dest.writeString(comments);
+            dest.writeString(direction);
+            dest.writeString(length);
             dest.writeLong(transectId);
-            dest.writeInt(photos == null ? 0 : photos.length );
+            dest.writeInt(photos == null ? 0 : photos.length);
             dest.writeStringArray(photos);
             dest.writeParcelable(location, PARCELABLE_WRITE_RETURN_VALUE);
+            dest.writeParcelable(transectLocation, PARCELABLE_WRITE_RETURN_VALUE);
         }
 
         @Override

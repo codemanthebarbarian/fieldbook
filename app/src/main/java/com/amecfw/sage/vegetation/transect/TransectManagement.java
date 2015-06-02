@@ -88,7 +88,7 @@ public class TransectManagement extends StationManager<TransectEditFragment> {
         StationService.updateFromViewModel(transEnd, viewModel, photos);
         transEnd.setLocationProxy(LocationService.createProxyFromLocations(CollectionOperations.createList(viewModel.location)
                 , new Location(), LocationService.FEATURE_TYPE_POINT));
-        transEnd.getLocationProxy().setSite(transEnd.getProjectSite().getSite());
+        if(transEnd.getProjectSite() != null) transEnd.getLocationProxy().setSite(transEnd.getProjectSite().getSite());
         transEnd.getLocationProxy().getModel().setName(transEnd.getModel().getName());
         transEnd.setRoot(service.getStationProxy(service.getStation(viewModel.transectId)));
         return transEnd;
@@ -133,27 +133,35 @@ public class TransectManagement extends StationManager<TransectEditFragment> {
         TransectEndEditFragment.ViewModel viewModel = new TransectEndEditFragment.ViewModel();
         service.updateFromProxy(service.getStationProxy(endStation), viewModel);
         viewModel.transectId = transect.getId();
+        if(stationProxy.getLocationProxy() != null && stationProxy.getLocationProxy().getLocations() != null
+                && stationProxy.getLocationProxy().getLocations().size() > 0)
+            viewModel.transectLocation = stationProxy.getLocationProxy().getLocations().get(0);
         Fragment f = getFragmentManager().findFragmentById(R.id.rareplant_stationManagement_containerB);
         if(f == null){
             TransectEndEditFragment endFragment = new TransectEndEditFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelable(StationEditFragmentBase.ARV_VIEW_STATE, ViewState.getViewStateEdit());
             bundle.putParcelable(StationEditFragmentBase.ARG_VIEW_MODEL, viewModel);
-            getFragmentManager().beginTransaction().add(R.id.rareplant_stationManagement_containerB, endFragment, TransectEndEditFragment.class.getName());
+            endFragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().add(R.id.rareplant_stationManagement_containerB, endFragment, TransectEndEditFragment.class.getName()).commit();
         }else{ //replace the current fragment
             TransectEndEditFragment endFragment = new TransectEndEditFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelable(StationEditFragmentBase.ARV_VIEW_STATE, ViewState.getViewStateEdit());
             bundle.putParcelable(StationEditFragmentBase.ARG_VIEW_MODEL, viewModel);
-            getFragmentManager().beginTransaction().replace(R.id.rareplant_stationManagement_containerB, endFragment, TransectEndEditFragment.class.getName());
+            endFragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().replace(R.id.rareplant_stationManagement_containerB, endFragment, TransectEndEditFragment.class.getName()).commit();
         }
+        saveBtn.setVisible(true);
     }
 
     private Station newTransectEnd(Station transect){
         Station end = new Station();
+        end.setId(0L);
         end.setStation(transect);
         end.setStationType(VegetationGlobals.SURVEY_TRANSECT_END);
         end.setName(transect.getName());
+        end.setProjectSite(projectSite);
         return end;
     }
 }
