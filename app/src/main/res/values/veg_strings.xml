@@ -50,6 +50,9 @@
 	<string name="vegTransectStationListEdit_stationName">Transect Name</string>
 	<string name="vegTransectStationListEdit_FieldLead">Field Lead:</string>
 	<string name="vegTransectStationListEdit_FieldCrew">Field Crew:</string>
+	<string name="vegTransectStationListEdit_endTransect">End Transect</string>
+	<string name="vegTransectStationListEdit_direction">Direction:</string>
+	<string name="vegTransectStationListEdit_length">Length (m):</string>
 
 	<!-- Transect Plot -->
 	<string name="transectPlot_Title">Transect %s Plots</string>
