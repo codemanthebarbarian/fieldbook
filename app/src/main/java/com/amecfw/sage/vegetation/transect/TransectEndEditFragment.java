@@ -16,7 +16,6 @@ import com.amecfw.sage.model.ObservationDescriptor;
 import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.service.DescriptorServices;
-import com.amecfw.sage.model.service.LocationService;
 import com.amecfw.sage.model.service.StationService;
 import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.util.Convert;
@@ -31,6 +30,7 @@ import java.util.TimeZone;
 public class TransectEndEditFragment extends StationEditFragmentBase<TransectEndEditFragment.ViewModel> {
 
     android.location.Location tranLoc;
+    private Long transID;
 
     private EditText tranDir;
     private EditText tranLength;
@@ -67,6 +67,7 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
         viewModel.location = location;
         viewModel.length = Convert.toStringOrNull(tranLength);
         viewModel.direction = Convert.toStringOrNull(tranDir);
+        viewModel.transectId = transID;
         return viewModel;
     }
 
@@ -85,6 +86,7 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
         setDateTimeCollected();
         tranLoc = viewModel.transectLocation;
         location = viewModel.location;
+        transID = viewModel.transectId;
         updateLocationText(location);
         tranDir.setText(viewModel.direction);
         tranLength.setText(viewModel.length);
