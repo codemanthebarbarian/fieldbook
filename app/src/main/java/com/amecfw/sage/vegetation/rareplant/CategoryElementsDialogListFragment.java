@@ -132,7 +132,9 @@ public class CategoryElementsDialogListFragment extends DialogFragment implement
 		public boolean onLongClick(View v) {
 			final int viewId = v.getId();
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setMessage(R.string.categorySurvey_deleteElementMessage).setIcon(android.R.drawable.ic_dialog_alert);
+			builder.setMessage(SageApplication.getInstance()
+					.getContext().getString(R.string.categorySurvey_deleteElementMessage, adapter.getDisplayName(viewId)))
+					.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setPositiveButton(R.string.delete,
 					new DialogInterface.OnClickListener() {						
 						@Override

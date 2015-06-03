@@ -51,6 +51,7 @@ import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.ListAdapter;
 import com.amecfw.sage.fieldbook.R;
 import com.amecfw.sage.util.OnEditListener;
+import com.amecfw.sage.vegetation.transect.TransectEndEditFragment;
 
 public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsListAdapter.ViewModel> {
 	
@@ -129,6 +130,8 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			return vm.getCommonName();
 		}
 	}
+
+	public String getDisplayName(int position){ return getDisplayName(get(position)); }
 	
 	private View currentFocus;
 	private OnFocusChangeListener focusChangeListener = new OnFocusChangeListener() {	
