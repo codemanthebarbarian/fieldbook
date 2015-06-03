@@ -2,6 +2,8 @@ package com.amecfw.sage.vegetation.rareplant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,12 +64,14 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 		super(context, elements);
 		viewMode = elementListViewMode;
 		mIsDirty = false;
+		Collections.sort(elements, new ViewModelComparator(viewMode));
 	}
 	
 	@Override
 	public void setItems(List<ViewModel> items) {
 		if(currentFocus != null) currentFocus.clearFocus();
 		mIsDirty = false;
+		Collections.sort(items, new ViewModelComparator(viewMode));
 		super.setItems(items);
 	}
 
@@ -381,6 +385,46 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 	}
 
 	// END PHOTO
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// Sorting
+
+	public static class ViewModelComparator implements Comparator<ViewModel> {
+
+		private int viewMode;
+
+		public ViewModelComparator(int viewMode){
+			this.viewMode = viewMode;
+		}
+
+		@Override
+		public int compare(ViewModel viewModel, ViewModel t1) {
+			switch (viewMode){
+				case ElementsMultiSelectListAdapter.DISPLAY_SCODE_COMMON:
+				case ElementsMultiSelectListAdapter.DISPLAY_SCODE_SCIENTIFIC:
+					return compareByScode(viewModel, t1);
+				case ElementsMultiSelectListAdapter.DISPLAY_SCIENTIFIC_COMMON:
+					return compareBySci(viewModel, t1);
+				default:
+					return compareByComm(viewModel, t1);
+			}
+		}
+
+		private int compareByScode(ViewModel a, ViewModel b){
+			return a.sCode.compareToIgnoreCase(b.sCode);
+		}
+
+		private int compareBySci(ViewModel a, ViewModel b){
+			return a.scientificName.compareToIgnoreCase(b.scientificName);
+		}
+
+		private int compareByComm(ViewModel a, ViewModel b){
+			return b.commonName.compareToIgnoreCase(b.commonName);
+		}
+	}
+
+	// end sorting
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
