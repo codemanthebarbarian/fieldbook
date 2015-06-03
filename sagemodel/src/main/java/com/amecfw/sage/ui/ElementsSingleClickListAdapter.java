@@ -106,17 +106,48 @@ public class ElementsSingleClickListAdapter extends ListAdapter<Element> impleme
     private class ElementFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
+            String trimmed = constraint.toString().trim();
             FilterResults retVal = new FilterResults();
             ArrayList<Element> results = new ArrayList<Element>();
-            if (constraint != null) {
+            if (trimmed != null) {
                 if (original != null && original.size() > 0) {
-                    for (Element element : original) {
-                        // check SCODE, scientific name and common name
-                        if (matches(element.getScode(), constraint)
-                                || matches(element.getScientificName(), constraint)
-                                || matches(element.getCommonName(), constraint)) {
-                            results.add(element);
-                        }
+                    // check SCODE, scientific name and common name
+                    switch (displayMode){
+                        case DISPLAY_SCIENTIFIC_COMMON:
+                            for (Element element : original) {
+                                if (matches(element.getScientificName(), trimmed)
+                                        || matches(element.getCommonName(), trimmed))
+                                    results.add(element);
+                            }
+                            break;
+                        case DISPLAY_COMMON_SCIENTIFIC:
+                            for (Element element : original) {
+                                if (matches(element.getCommonName(), trimmed)
+                                        || matches(element.getScientificName(), trimmed))
+                                    results.add(element);
+                            }
+                            break;
+                        case DISPLAY_SCODE_SCIENTIFIC:
+                            for (Element element : original) {
+                                if (matches(element.getScode(), trimmed)
+                                        || matches(element.getScientificName(), trimmed))
+                                    results.add(element);
+                            }
+                            break;
+                        case DISPLAY_SCODE_COMMON:
+                            for (Element element : original) {
+                                if (matches(element.getScode(), trimmed)
+                                        || matches(element.getCommonName(), trimmed))
+                                    results.add(element);
+                            }
+                            break;
+                        default:
+                            for (Element element : original) {
+                                if (matches(element.getScode(), trimmed)
+                                        || matches(element.getScientificName(), trimmed)
+                                        || matches(element.getCommonName(), trimmed))
+                                    results.add(element);
+                            }
                     }
                 }
             }
