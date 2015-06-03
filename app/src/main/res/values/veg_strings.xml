@@ -31,7 +31,7 @@
 	<string name="rarePlantStationListEdit_EcoSite">Eco Site:</string>
 	
 	<!-- CategroySurvey -->
-	<string name="categorySurvey_deleteElementMessage">Delete Element?</string>
+	<string name="categorySurvey_deleteElementMessage">Delete Element %s ?</string>
 	<string name="categorySurvey_title">Station: %s</string>
 	<string name="categorySurveyElementsItem_notes">Notes</string>
 	<string name="categorySurveyMenu_add">Add</string>
