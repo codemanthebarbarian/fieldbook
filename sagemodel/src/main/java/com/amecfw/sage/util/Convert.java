@@ -67,6 +67,10 @@ public class Convert {
 		}
 		return result;
 	}
+
+	public static String toStringOrNull(float mFloat){
+		return Float.toString(mFloat);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static <T> T getTagAs(View v, int key, T defaultValue){

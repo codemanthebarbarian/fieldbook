@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- StationManager view items -->
+    <item type="id" name="stationEditBase_layout_stationName" />
+    <item type="id" name="stationEditBase_layout_coordinateText" />
+    <item type="id" name="stationEditBase_layout_setDateTime"/>
+    <item type="id" name="stationEditBase_layout_comments" />
+    <item type="id" name="stationEditBase_layout_dateTimeCollected" />
+    <item type="id" name="stationEditBase_layout_locationButton" />
+    <item type="id" name="stationEditBase_layout_takePhoto" />
+    <item type="id" name="stationEditBase_layout_photoFragment"/>
+</resources>

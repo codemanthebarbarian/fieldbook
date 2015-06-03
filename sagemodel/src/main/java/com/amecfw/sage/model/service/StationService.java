@@ -39,6 +39,12 @@ private DaoSession session;
 		}
 		save(station);
 	}
+
+	public void save(Station station, Station root){
+		if(root.getId() == null || root.getId() < 1) save(root);
+		station.setStation(root);
+		save(station);
+	}
 	
 	public void save(Station station){
 		station.setId(null);
@@ -66,10 +72,21 @@ private DaoSession session;
 		session.getStationDao().update(station);
 		MetaDataService.update(station, session.getStationMetaDao());
 	}
-	
+
+	public void update(Station station, Station root){
+		if(root == null) station.setStation(null);
+		else if(station.getStation() == null) root.setStation(root);
+		else if(station.getRootID() != root.getId()) station.setStation(root);
+		update(station);
+	}
+
 	public void update(Station station){
 		session.getStationDao().update(station);
 		MetaDataService.update(station, session.getStationMetaDao());
+	}
+
+	public Station getStation(Long stationId){
+		return session.getStationDao().load(stationId);
 	}
 	
 	public List<Station> find(Location location, ProjectSite projectSite){
@@ -137,16 +154,18 @@ private DaoSession session;
 		if(station == null) return result;
 		result = new StationProxy();
 		result.setModel(station);
-		result.setProjectSite(station.getProjectSite());
-		result.setLocation(station.getLocation());
-		if(station.getLocation() != null){
-			LocationService ls = new LocationService(session);
-			result.setLocationProxy(ls.getProxy(station.getLocation()));
-			if(result.getLocationProxy().getCoordinates() != null && result.getLocationProxy().getLocations().size() > 0){
-				result.setGpsLocation(result.getLocationProxy().getLocations().get(0));
+		if(station.getProjectSiteID() != null) result.setProjectSite(station.getProjectSite());
+		if(station.getLocationID() != null) {//The station has a location
+			result.setLocation(station.getLocation());
+			if (station.getLocation() != null) {
+				LocationService ls = new LocationService(session);
+				result.setLocationProxy(ls.getProxy(station.getLocation()));
+				if (result.getLocationProxy().getCoordinates() != null && result.getLocationProxy().getLocations().size() > 0) {
+					result.setGpsLocation(result.getLocationProxy().getLocations().get(0));
+				}
 			}
 		}
-		if(station.getStation() != null) result.setRoot(getStationProxy(station.getStation()));
+		if(station.getRootID() != null) result.setRoot(getStationProxy(station.getStation()));
 		List<Photo> photos = new PhotoService(session).find(station);
 		if(photos != null && photos.size() > 0) result.setPhotos(PhotoService.convertToProxy(photos, station));
 		result.setObservations(new ObservationService(session).findObservations(station));
@@ -181,7 +200,7 @@ private DaoSession session;
 			db.setTransactionSuccessful(); 
 			result = true;
 		} catch(Exception ex){
-			Log.e("sulphurFieldbook.collectionForm.Services",ex.getMessage() == null ? ex.getClass().getName() : ex.getMessage());
+			Log.e("StationService",ex.getMessage() == null ? ex.getClass().getName() : ex.getMessage());
 			result = false;
 		}finally{
 			db.endTransaction();
@@ -199,6 +218,8 @@ private DaoSession session;
 			new LocationService(session).saveOrUpdateProxy(proxy.getLocationProxy());
 			proxy.getModel().setLocation(proxy.getLocationProxy().getModel());
 		}
+		//If there is a root station, link it
+		if(proxy.getRoot() != null) proxy.getModel().setStation(proxy.getRoot().getModel());
 		//Save the station
 		save(proxy.getModel());
 		//Save observations

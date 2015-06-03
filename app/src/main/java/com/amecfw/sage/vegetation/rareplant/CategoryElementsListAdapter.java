@@ -270,7 +270,7 @@ public class CategoryElementsListAdapter extends ListAdapter<CategoryElementsLis
 			sendCoordinateRequest();
 		}
 
-		public void setOnEditListener(com.amecfw.sage.util.OnEditListener listener){onEditListener = listener; };
+		public void setOnEditListener(com.amecfw.sage.util.OnEditListener listener){onEditListener = listener; }
 
 		@Override
 		public void handleMessage(Message m) {

@@ -33,26 +33,20 @@ import java.util.TimeZone;
 /**
  *
  */
-public class TransectEditFragment extends StationEditFragmentBase<TransectEditFragment.ViewModel> {
+public class PlotEditFragment extends StationEditFragmentBase<PlotEditFragment.ViewModel> {
 
-    private ImageButton fieldLead;
-    private ImageButton fieldCrew;
-    private EditText fieldLeadTextField;
-    private EditText fieldCrewTextField;
+    private ImageButton ecoSite;
+    private EditText ecoSiteTextField;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         notify = false;
-        View view = inflater.inflate(R.layout.veg_transect_edit, container, false);
+        View view = inflater.inflate(R.layout.veg_trasect_plot_edit, container, false);
         super.initializeBase(view);
-        fieldLead = (ImageButton)view.findViewById(R.id.transectEdit_layout_FieldLeadimageButton);
-        fieldLead.setOnClickListener(fieldLeadListener);
-        fieldLeadTextField = (EditText)view.findViewById(R.id.transectEdit_layout_FieldLead);
-        fieldLeadTextField.addTextChangedListener(textWatcher);
-        fieldCrew = (ImageButton) view.findViewById(R.id.transectEdit_layout_FieldCrewimageButton);
-        fieldCrew.setOnClickListener(fieldCrewListener);
-        fieldCrewTextField = (EditText)view.findViewById(R.id.transectEdit_layout_FieldCrew);
-        fieldCrewTextField.addTextChangedListener(textWatcher);
+        ecoSiteTextField = (EditText)view.findViewById(R.id.plotEdit_layout_ecoSite);
+        ecoSiteTextField.addTextChangedListener(textWatcher);
+        ecoSite = (ImageButton) view.findViewById(R.id.plotEdit_layout_ecoSiteImageButton);
+        ecoSite.setOnClickListener(ecoSiteListener);
         initialize(savedInstanceState == null ? getArguments() : savedInstanceState);
         notify = true;
         return view;
@@ -71,8 +65,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
     public ViewModel getViewModel() {
         ViewModel viewModel = new ViewModel();
         viewModel.stationName = Convert.toStringOrNull(stationName);
-        viewModel.fieldLead = Convert.toStringOrNull(fieldLeadTextField);
-        viewModel.fieldCrew = Convert.toStringOrNull(fieldCrewTextField);
+        viewModel.ecoSite = Convert.toStringOrNull(ecoSiteTextField);
         viewModel.dateCreated = dateCreatedStamp;
         viewModel.timeCreated = timeCreatedStamp;
         viewModel.comments = Convert.toStringOrNull(comments);
@@ -89,8 +82,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
             return;
         }
         stationName.setText(viewModel.stationName);
-        fieldLeadTextField.setText(viewModel.fieldLead);
-        fieldCrewTextField.setText(viewModel.fieldCrew);
+        ecoSiteTextField.setText(viewModel.ecoSite);
         dateCreatedStamp = viewModel.dateCreated;
         timeCreatedStamp = viewModel.timeCreated;
         comments.setText(viewModel.comments);
@@ -102,48 +94,23 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
         notify = true;
     }
 
-    private View.OnClickListener fieldLeadListener = new View.OnClickListener() {
-
+    private View.OnClickListener ecoSiteListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             ApplicationUI.hideSoftKeyboard(getActivity());
             GroupObservation g = new GroupObservation();
-            g.setAllowableValues("ML,LT,CC,OJ,KL,DP");
+            g.setAllowableValues("a1,b1,c1,c2,wetland 1, wetland 2");
             Bundle bundle = new Bundle();
             bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
             ObservationDialogFragment dialog = new ObservationDialogFragment();
             dialog.setArguments(bundle);
             dialog.setExitListener(new OnExitListener<String>() {
-
                 @Override
                 public void onExit(String viewModel, ViewState viewState) {
-                    fieldLeadTextField.setText(viewModel);
+                    ecoSiteTextField.setText(viewModel);
                 }
             });
             dialog.show(getFragmentManager(), null);
-        }
-    };
-
-    private View.OnClickListener fieldCrewListener = new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-            ApplicationUI.hideSoftKeyboard(getActivity());
-            GroupObservation g = new GroupObservation();
-            g.setAllowableValues("ML,LT,CC,OJ,KL,DP");
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
-            bundle.putBoolean(ObservationDialogFragment.ARG_MULTI_SELECT, true);
-            ObservationDialogFragment dialog = new ObservationDialogFragment();
-            dialog.setArguments(bundle);
-            dialog.setExitListener(new OnExitListener<String>() {
-
-                @Override
-                public void onExit(String viewModel, ViewState viewState) {
-                    fieldCrewTextField.setText(viewModel);
-                }
-            });
-            dialog.show(getFragmentManager(), null);
-
         }
     };
 
@@ -151,12 +118,10 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
 
         @FieldDescriptor(clazz = Station.class, targetGetter = "getName", targetSetter = "setName")
         public String stationName;
-        @ObservationDescriptor(fieldName="fieldLead", observationType = "field lead", defaultValue = "not recorded")
-        public String fieldLead;
-        @ObservationDescriptor(fieldName="fieldCrew", observationType = "field crew", defaultValue = "not recorded")
-        public String fieldCrew;
+        @ObservationDescriptor(fieldName="ecoSite", observationType = "eco site", defaultValue = "")
+        public String ecoSite;
         @FieldDescriptor(clazz = Station.class, targetGetter = "getStationType", targetSetter = "setStationType")
-        public String stationType = VegetationGlobals.SURVEY_TRANSECT;
+        public String stationType = VegetationGlobals.STATION_TYPE_VEGETATION_PLOT;
         @FieldDescriptor(clazz = Station.class, targetGetter = "getSurveyDate", targetSetter = "setSurveyDate", type= DescriptorServices.TYPE_DATE)
         public Date dateCreated;
         @FieldDescriptor(clazz = Station.class, targetGetter = "getSurveyTime", targetSetter = "setSurveyTime", type=DescriptorServices.TYPE_DATE)
@@ -180,8 +145,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
 
         public ViewModel(Parcel in){
             this.stationName = in.readString();
-            this.fieldLead = in.readString();
-            this.fieldCrew = in.readString();
+            this.ecoSite = in.readString();
             this.dateCreated = new Date(in.readLong());
             this.timeCreated = new Date(in.readLong());
             this.timeZone = in.readString();
@@ -194,8 +158,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
         @Override
         public void writeToParcel(Parcel dest, int flags){
             dest.writeString(stationName);
-            dest.writeString(fieldLead);
-            dest.writeString(fieldCrew);
+            dest.writeString(ecoSite);
             dest.writeLong(dateCreated.getTime());
             dest.writeLong(timeCreated.getTime());
             dest.writeString(timeZone);

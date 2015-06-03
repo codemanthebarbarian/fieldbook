@@ -19,6 +19,10 @@ public class VegetationGlobals {
 	public static final String STATION_TYPE_VEGETATION_RAREPLANT_CATEGORY = "Vegetation Rare Site Survey";
 	/** the meta name value for project sites for a Transect survey, also station type for Transect survey */
 	public static final String SURVEY_TRANSECT = "TRANSECT";
+	/** the meta name value for project sites for a Transect survey, also station type for Transect survey */
+	public static final String SURVEY_TRANSECT_END = "TRANSECT END";
+	/** the station type to identity substation for vegetation plots */
+	public static final String STATION_TYPE_VEGETATION_PLOT = "VEGETATION PLOT";
 
 	/** the index in the array of values for a rare plant survey */
 	public static final int SURVEY_KEY_RARE_PLANT = 0;
