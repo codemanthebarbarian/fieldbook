@@ -213,9 +213,7 @@ public class CategorySurvey extends Activity {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            searchView.setOnQueryTextListener(null);
-            searchView.clearFocus();
-            searchView.setQuery(null, false);
+            clearSearch();
 			Fragment f = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
 			if(f != null){
 				ElementsMultiSelectListDialogFragment ef =  new ElementsMultiSelectListDialogFragment();
@@ -223,6 +221,12 @@ public class CategorySurvey extends Activity {
 			}
         }
     };
+
+	private void clearSearch(){
+		searchView.setOnQueryTextListener(null);
+		searchView.clearFocus();
+		searchView.setQuery(null, false);
+	}
 
     // END Search
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,7 +418,10 @@ public class CategorySurvey extends Activity {
 	private void onGroupSelected(ElementGroup group){
 		Toast.makeText(this, group.getName(), Toast.LENGTH_SHORT).show();
 		Fragment fragment = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
-		if(fragment != null) ((ElementsMultiSelectListDialogFragment)fragment).setElements(getElements(group));
+		if(fragment != null){
+			clearSearch();
+			((ElementsMultiSelectListDialogFragment)fragment).setElements(getElements(group));
+		}
 	}
 	
 	// END ELEMENT METHODS ////////////////////////////////////////////////////////////////////////
