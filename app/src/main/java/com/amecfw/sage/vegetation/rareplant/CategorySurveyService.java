@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.amecfw.sage.model.Element;
 import com.amecfw.sage.model.Location;
+import com.amecfw.sage.model.Photo;
 import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.model.Station;
 import com.amecfw.sage.model.StationElement;
@@ -61,13 +62,16 @@ public class CategorySurveyService {
 		List<StationElementProxy> fromVM = CategorySurveyService.convertToProxies(viewModels);
 		List<StationElementProxy> forDelete = CollectionOperations.except(proxies, fromVM, comparator);
 		if(forDelete != null && forDelete.size() > 0) CollectionOperations.removeAll(proxies, forDelete, comparator);
+		//PhotoService photoService = new PhotoService(SageApplication.getInstance().getDaoSession());
 		for(StationElementProxy proxy: proxies){ //TODO: investigate moving to ElementService
 			StationElementProxy temp = CollectionOperations.find(fromVM, proxy, comparator);
 			proxy.getModel().setCount(temp.getModel().getCount());
 			MetaDataService.MetaSupportExtensionMethods.replace(proxy.getModel(), temp.getModel());
 			updateLocationProxy(proxy, temp);
 			//TODO: deal with photos
-			// photos are handled at the time a picture is taken
+			temp.setPhotos(proxy.getPhotos());
+			//List<Photo> photos = photoService.find(proxy.getModel());
+			//if(photos != null && photos.size() > 0) proxy.setPhotos(PhotoService.convertToProxy(photos, proxy.getModel()));
 		}
 	}
 
