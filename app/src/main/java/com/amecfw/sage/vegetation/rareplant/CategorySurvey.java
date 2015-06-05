@@ -171,6 +171,7 @@ public class CategorySurvey extends Activity {
 		if(! isDirty) return; //Nothing has changed, nothing to save
 		//Save the proxy
 		boolean saved = CategorySurveyService.saveOrUpdate(proxy);
+		if(saved) Toast.makeText(this, getResources().getString(R.string.saving) , Toast.LENGTH_SHORT).show();
 		isDirty = !saved;
 	}
 
@@ -269,6 +270,7 @@ public class CategorySurvey extends Activity {
 			saveButton.setVisible(true);
 			break;				
 		case ViewState.ADD:
+			doSave();
 			fragment = getFragmentManager().findFragmentByTag(ElementsMultiSelectListDialogFragment.class.getName());
 			ElementsMultiSelectListDialogFragment elementsFrag = fragment == null ? new ElementsMultiSelectListDialogFragment() :
 				(ElementsMultiSelectListDialogFragment) fragment;
@@ -343,6 +345,7 @@ public class CategorySurvey extends Activity {
 			int added = proxy.addElements(selectedElements, currentCategory.getCategoryName());
 			currentCategory.setElementCount(currentCategory.getElementCount() + added);
 			if(!isDirty && added > 0) isDirty = true;
+			doSave();
 			Bundle args = new Bundle();
 			args.putInt(ActionEvent.ARG_COMMAND, CategoryFragment.COMMAND_UPDATE_CATEGORY);
 			args.putParcelable(CategoryFragment.ARG_CATEGORY_VIEW_MODEL, currentCategory);
@@ -363,6 +366,7 @@ public class CategorySurvey extends Activity {
 			proxy.updateCanopyElementViewModels(ceFragment.getCategoryElements(), currentCategory.getCategoryName());
 			isDirty = true;
 		}
+		doSave(); //Save any previous changes
 		currentCategory = viewModel;
 		//Set the new elements
 		((CategoryElementsDialogListFragment) fragment).setCategoryElements(getCategoryElements(currentCategory));

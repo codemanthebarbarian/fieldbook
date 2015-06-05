@@ -6,6 +6,7 @@
     <string name="noItems">No Items</string>
     <string name="exit">Exit</string>
     <string name="save">Save</string>
+    <string name="saving">Saving</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="notAvailable_na">N/A</string>
