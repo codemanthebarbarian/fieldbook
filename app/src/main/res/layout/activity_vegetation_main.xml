@@ -6,13 +6,13 @@
 	<FrameLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
-	    android:layout_weight=".82"
+	    android:layout_weight=".61"
 	    android:id="@+id/vegetationManagement_containerA" >
 	</FrameLayout>
 	<FrameLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
-	    android:layout_weight=".18"
+	    android:layout_weight=".39"
 	    android:id="@+id/vegetationManagement_containerB" >
 	</FrameLayout>
 </LinearLayout>
