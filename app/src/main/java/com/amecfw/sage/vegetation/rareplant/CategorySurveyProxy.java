@@ -78,6 +78,17 @@ public class CategorySurveyProxy extends StationProxy {
 			viewModels.add(CategorySurveyService.convertToViewModel(proxy));
 		}		
 	}
+
+	/**
+	 * invalidate the view models for the provided canopy (basically clear the list).
+	 * if the canopy does not exist, does nothing.
+	 * @param canopy
+	 */
+	public void invalidateViewModels(String canopy){
+		int index = getIndex(canopy);
+		if(index < 0) return;
+		if(canopyElementViewModels.get(index) != null) canopyElementViewModels.get(index).clear();
+	}
 	
 	/**
 	 * Sync the proxy from the view models at the provided index

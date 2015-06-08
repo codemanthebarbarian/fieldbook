@@ -185,6 +185,7 @@ public class PhotoService {
 			File dest = new File(String.format("%s/%s", getPhotoDirectory().getAbsolutePath(), proxy.getModel().buildPath()));
 			moveImage(tmpLoc, dest, proxy.getModel().buildFileName(), true);
 			proxy.getModel().setPath(String.format("%s/%s", dest.getAbsolutePath(), proxy.getModel().buildFileName()));
+			proxy.setFile(new File(String.format("%s/%s", dest.getAbsolutePath(), proxy.getModel().buildFileName())));
 			proxy.setTemporary(false);
 		}
 	}
