@@ -112,25 +112,6 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
         projectSite = new ProjectSiteServices(session).getProjectSite(savedInstanceState.getLong(EXTRA_PROJECT_SITE_ID));
     }
 
-//    protected void loadEditFragment(){
-//        Fragment f = getFragmentManager().findFragmentByTag(getEditFragmentClass().getName());
-//        stationProxy = null;
-//        if(f== null){
-//            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//            TEditFragment editFragment = getEditFragmentInstance();
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelable(TransectEditFragment.ARV_VIEW_STATE, ViewState.getViewStateAdd());
-//            transaction.add(R.id.rareplant_stationManagement_containerB, editFragment, getEditFragmentClass().getName());
-//            transaction.commit();
-//            saveBtn.setVisible(true);
-//        } else {
-//            Bundle args = new Bundle();
-//            args.putInt(ActionEvent.ARG_COMMAND, StationEditFragmentBase.COMMAND_NOTIFY_NEW);
-//            ((TransectEditFragment) f).actionPerformed(ActionEvent.getActionDoCommand(args));
-//        }
-//        viewState.setStateAdd();
-//    }
-
     /**
      * Used internally to load new fragments.
      * @return a new instance of a TEditFragments
@@ -154,6 +135,17 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
     protected void doAdd(){
         if(isDirty()) displayAddNewCancelSaveDialog();
         else showAdd();
+    }
+
+    /**
+     * If showing, removes any fragment being displayed in containerB and hides the save button
+     * if displayed finally sets stationproxy to be null
+     */
+    protected void showView(){
+        if(saveBtn.isVisible()) saveBtn.setVisible(false);
+        Fragment f = getFragmentManager().findFragmentById(R.id.rareplant_stationManagement_containerB);
+        if(f != null) getFragmentManager().beginTransaction().remove(f).commit();
+        stationProxy = null;
     }
 
     protected void showAdd(){
@@ -208,10 +200,11 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
             if(isDirty());//TODO: should prompt user to save changes
             if(cancel) return;
             args.putInt(ActionEvent.ARG_COMMAND, StationEditFragmentBase.COMMAND_EDIT);
-            editFragment.actionPerformed(ActionEvent.getActionDoCommand(args));
             args.putParcelable(StationEditFragmentBase.ARG_VIEW_MODEL, editFragment.createViewModel(stationProxy));
             editFragment.setPhotos(stationProxy.getPhotos());
+            editFragment.actionPerformed(ActionEvent.getActionDoCommand(args));
         }
+        viewState.setStateEdit();
         saveBtn.setVisible(true);
     }
 
@@ -286,7 +279,7 @@ public abstract class StationManager<TEditFragment extends StationEditFragmentBa
             case ViewState.ADD:
                 break;
             case ViewState.VIEW:
-                //loadEditFragment();
+                showView();
                 break;
         }
     }
