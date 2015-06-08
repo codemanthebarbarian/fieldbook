@@ -11,6 +11,7 @@ import com.amecfw.sage.persistence.ProjectDao;
 import com.amecfw.sage.persistence.ProjectSiteMetaDao;
 import com.amecfw.sage.persistence.SiteDao;
 import com.amecfw.sage.proxy.ProjectSiteProxy;
+import com.amecfw.sage.ui.ProjectSiteEdit;
 
 import de.greenrobot.dao.DaoException;
 
@@ -43,8 +44,8 @@ public class ProjectSiteServices {
 	
 	/**
 	 * Get the project site based on the provided metadata name and value
-	 * @param discriminatorName
-	 * @param discriminatorValue
+	 * @param metaName
+	 * @param metaValue
 	 * @return the list of matching project sites or and empty list if none are found
 	 */
 	public List<ProjectSite> findProjectSites(String metaName, String metaValue){
@@ -53,7 +54,7 @@ public class ProjectSiteServices {
 	
 	/**
 	 * Get the project site based on the provided metadata name
-	 * @param discriminatorName
+	 * @param metaName
 	 * @return the list of matching project sites or and empty list if none are found
 	 */
 	public List<ProjectSite> findProjectSitesByMetaName(String metaName){
@@ -62,7 +63,7 @@ public class ProjectSiteServices {
 	
 	/**
 	 * Get the project site based on the provided metadata value
-	 * @param discriminatorValue
+	 * @param metaValue
 	 * @return the list of matching project sites or and empty list if none are found
 	 */
 	public List<ProjectSite> findProjectSitesByMetaValue(String metaValue){
@@ -327,6 +328,14 @@ public class ProjectSiteServices {
 	
 	public List<Site> findSites(String name){
 		return session.getSiteDao().queryBuilder().where(SiteDao.Properties.Name.eq(name)).list();
+	}
+
+	public static ProjectSiteEdit.ViewModel createViewModel(ProjectSite projectSite){
+		ProjectSiteEdit.ViewModel result = new ProjectSiteEdit.ViewModel();
+		if (projectSite == null) return result;
+		DescriptorServices.getByFieldDescriptor(result, projectSite.getProject());
+		DescriptorServices.getByFieldDescriptor(result, projectSite.getSite());
+		return result;
 	}
 	
 	/**

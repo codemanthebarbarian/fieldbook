@@ -109,6 +109,33 @@ public class VegetationMainActivity extends Activity implements ProjectSiteList.
 		
 	}
 
+	private com.amecfw.sage.util.OnItemSelectedHandler<ProjectSite> longPressHandler =
+			new com.amecfw.sage.util.OnItemSelectedHandler<ProjectSite>() {
+				@Override
+				public void onItemSelected(ProjectSite item) {
+					if(item != null) doEdit(item);
+				}
+			};
+
+	private void doEdit(ProjectSite projectSite){
+		Fragment f = getFragmentManager().findFragmentByTag(ProjectSiteEdit.class.getCanonicalName());
+		if(f == null){
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			ProjectSiteEdit projectSiteEdit = new ProjectSiteEdit();
+			Bundle args = new Bundle();
+			args.putParcelable(ProjectSiteEdit.ARG_VIEWSTATE, ViewState.getViewStateEdit());
+			args.putParcelable(ProjectSiteEdit.ARG_VIEW_MODEL, ProjectSiteServices.createViewModel(projectSite));
+			projectSiteEdit.setArguments(args);
+			transaction.add(R.id.vegetationManagement_containerB, projectSiteEdit, ProjectSiteEdit.class.getName());
+			transaction.commit();
+			savebtn.setVisible(true);
+		}else{
+			ProjectSiteEdit frag = (ProjectSiteEdit) f;
+			frag.setViewModel(ProjectSiteServices.createViewModel(projectSite));
+		}
+		viewState.setStateEdit();
+	}
+
 	private void doSave() {
 		Fragment f = getFragmentManager().findFragmentByTag(ProjectSiteEdit.class.getName());
 		if(f == null) return;
@@ -121,6 +148,16 @@ public class VegetationMainActivity extends Activity implements ProjectSiteList.
 		savebtn.setVisible(false);
 		ApplicationUI.hideSoftKeyboard(this);
 		viewState.setStateView();
+	}
+
+	private void showView(){
+		Fragment f = getFragmentManager().findFragmentById(R.id.vegetationManagement_containerB);
+		if(f != null){
+			getFragmentManager().beginTransaction().remove(f).commit();
+		}
+		if(savebtn.isVisible()) savebtn.setVisible(false);
+		projectSiteEditProxy = null;
+		viewModel = null;
 	}
 
 	private void updateStationList() {
@@ -143,6 +180,7 @@ public class VegetationMainActivity extends Activity implements ProjectSiteList.
 		if(projectSites == null) projectSites = new ArrayList<ProjectSite>();
 		ProjectSiteList projectSiteList = new ProjectSiteList();
 		projectSiteList.setProjectSite(projectSites);
+		projectSiteList.setLongClickHandler(longPressHandler);
 		Bundle args = new Bundle();
 		args.putString(ProjectSiteList.ARG_META_VALUE, VegetationGlobals.DESCRIMINATOR_VEGETATION);
 		projectSiteList.setArguments(args);
@@ -154,14 +192,13 @@ public class VegetationMainActivity extends Activity implements ProjectSiteList.
 	public void onChangeMode(int newState) {
 		switch (newState){
 		case ViewState.EDIT:
+			if(! savebtn.isVisible()) savebtn.setVisible(true);
 			break;
 		case ViewState.ADD:
+			if(! savebtn.isVisible()) savebtn.setVisible(true);
 			break;
 		case ViewState.VIEW:
-			Fragment f = getFragmentManager().findFragmentByTag(ProjectSiteEdit.class.getName());
-			if(f != null){
-				getFragmentManager().beginTransaction().remove(f).commit();
-			}
+			showView();
 			break;
 		}
 	}

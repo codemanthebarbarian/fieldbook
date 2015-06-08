@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class ProjectSiteList extends ListFragment {
@@ -44,6 +45,7 @@ public class ProjectSiteList extends ListFragment {
 		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.simple_list_layout, container, false);
 		listView = (ListView) view.findViewById(android.R.id.list);
+		listView.setOnItemLongClickListener(itemLongClickListener);
 		if(savedInstanceState != null) initialize(savedInstanceState);
 		else initialize(getArguments());
 		return view;
@@ -76,6 +78,23 @@ public class ProjectSiteList extends ListFragment {
 		if(bundle == null) return;
 		metaName = bundle.getString(ARG_META_NAME);
 		metaValue = bundle.getString(ARG_META_VALUE);
+	}
+
+	private AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener(){
+		@Override
+		public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+			if(longClickHandler != null) {
+				longClickHandler.onItemSelected(adapter.getItem(i));
+				return true;
+			}
+			return false;
+		}
+	};
+
+	private com.amecfw.sage.util.OnItemSelectedHandler<ProjectSite> longClickHandler;
+
+	public void setLongClickHandler(com.amecfw.sage.util.OnItemSelectedHandler<ProjectSite> longClickHandler){
+		this.longClickHandler = longClickHandler;
 	}
 	
 	@Override
