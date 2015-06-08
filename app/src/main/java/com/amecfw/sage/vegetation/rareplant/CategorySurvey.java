@@ -365,11 +365,12 @@ public class CategorySurvey extends Activity {
 		if(ceFragment.isDirty()){ // update the previous elements
 			proxy.updateCanopyElementViewModels(ceFragment.getCategoryElements(), currentCategory.getCategoryName());
 			isDirty = true;
+			doSave(); //Save any previous changes
+			proxy.invalidateViewModels(currentCategory.getCategoryName());
 		}
-		doSave(); //Save any previous changes
 		currentCategory = viewModel;
 		//Set the new elements
-		((CategoryElementsDialogListFragment) fragment).setCategoryElements(getCategoryElements(currentCategory));
+		ceFragment.setCategoryElements(getCategoryElements(currentCategory));
 	}
 	
 	private ArrayList<CategoryElementsListAdapter.ViewModel> getCategoryElements(CategoryFragment.ViewModel category){
