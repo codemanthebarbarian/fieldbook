@@ -152,6 +152,7 @@ public class TransectManagement extends StationManager<TransectEditFragment> {
             endFragment.setArguments(bundle);
             getFragmentManager().beginTransaction().replace(R.id.rareplant_stationManagement_containerB, endFragment, TransectEndEditFragment.class.getName()).commit();
         }
+        viewState.setStateAdd();
         saveBtn.setVisible(true);
     }
 

@@ -21,6 +21,7 @@ import com.amecfw.sage.proxy.StationProxy;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.vegetation.VegetationGlobals;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -79,13 +80,27 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
             return;
         }
         stationName.setText(viewModel.stationName);
-        dateCreatedStamp = viewModel.dateCreated;
-        timeCreatedStamp = viewModel.timeCreated;
+        if(viewModel.dateCreated == null){
+            Calendar dt = Calendar.getInstance();
+            if(dateCreatedStamp != null){
+                dt.setTime(dateCreatedStamp);
+                setDateCollected(dt);
+            }
+            if(timeCreatedStamp != null){
+                dt.setTime(timeCreatedStamp);
+                setTimeCollected(dt);
+            }
+        }else {
+            dateCreatedStamp = viewModel.dateCreated;
+            timeCreatedStamp = viewModel.timeCreated;
+        }
+        setDateTimeCollected();
         comments.setText(viewModel.comments);
         if(viewModel.timeZone != null) timeZone = TimeZone.getTimeZone(viewModel.timeZone);
         setDateTimeCollected();
         tranLoc = viewModel.transectLocation;
         location = viewModel.location;
+        updateLocationText(location);
         transID = viewModel.transectId;
         updateLocationText(location);
         tranDir.setText(viewModel.direction);
