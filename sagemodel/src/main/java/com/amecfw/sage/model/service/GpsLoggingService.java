@@ -1,5 +1,7 @@
 package com.amecfw.sage.model.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 //import android.app.Notification;
@@ -50,6 +52,8 @@ public class GpsLoggingService extends Service {
 	public static final String KEY_SOURCE = "SOURCE";
 	/** the key for the location (same as Location.class.getName() ) */
 	public static final String KEY_LOCATION = Location.class.getName();
+	/** the key for the action in the bundle */
+	private static final String KEY_ACTION = "KEY_ACTION";
 	
 	private LocationManager locManager;
 	private GpsLocationListener locListenerFine;
@@ -64,7 +68,9 @@ public class GpsLoggingService extends Service {
 	private Boolean showStatusToasts = true;
 	private List<Location> locations;
 	private Messenger singleSource = null;
-	private Location singleUpdate = null;
+	private ArrayList<Message> requests;
+	LinkedHashMap<String, Messenger> singleSources;
+	private Location lastLocation;
 	private int singleTimeout = 0;
 	private int logState = LOG_STOP;
 	private Boolean isPassive = false;
@@ -104,13 +110,20 @@ public class GpsLoggingService extends Service {
 	/** Called when the activity is first created. */	 
     private void startLoggerService() {
     	// ---use the LocationManager class to obtain GPS locations---
+		requests = new ArrayList<>();
+		singleSources = new LinkedHashMap<>();
     	locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     	locListenerFine = new GpsLocationListener(Criteria.ACCURACY_FINE, LocationManager.GPS_PROVIDER);
     	locListenerCoarse = new GpsLocationListener(Criteria.ACCURACY_COARSE, LocationManager.NETWORK_PROVIDER);
+		registerLocationListeners();
     }
     
     private void shutdownLoggerService() { 
-    	if(isReqestingUpdates) locManager.removeUpdates(locListenerFine);
+    	if(isReqestingUpdates) {
+			locManager.removeUpdates(locListenerFine);
+			locManager.removeUpdates(locListenerCoarse);
+		}
+		requests.clear();
     } 
 
 
@@ -142,6 +155,27 @@ public class GpsLoggingService extends Service {
 	    	 registerLocationListeners();
     	 }    	 
      }
+
+	public void registerMessenger(Message msg){
+		Log.d("GPS", "registerMessenger");
+		if(msg.replyTo != null) singleSources.put(msg.getData().getString(KEY_SOURCE), msg.replyTo);
+	}
+
+	public void sendSingle(Messenger messenger, Location location, int source){
+		Log.d("GPS", "SendSingle");
+		if(messenger == null) return;
+		Message response = Message.obtain(null, GET_POINT);
+		Bundle bundle = new Bundle(); //need to bundle up the point for the response
+		bundle.putParcelable(KEY_LOCATION, location);
+		bundle.putInt(KEY_SOURCE, source);
+		//singleUpdate = null; // reset the single timeout params
+		response.setData(bundle);
+		try {
+			messenger.send(response);
+		} catch (RemoteException re) {
+			Log.e(this.getClass().getSimpleName(), re.getMessage());
+		}
+	}
      
      public void sendSingle(Location location, int source){
     	 singleTimeout = 0;
@@ -187,6 +221,13 @@ public class GpsLoggingService extends Service {
     	 tryStopRequestingUpdates();
     	 passiveSource = null;
      }
+
+	private void onCancel(Message msg){
+		Log.d("GPS", "onCancel " + msg.getData().getString(KEY_SOURCE));
+		if(singleSources.size() > 0) {
+			singleSources.remove(msg.getData().getString(KEY_SOURCE));
+		}
+	}
      
      private void onCancel(){
     	 if(isRecording) isRecording = false;
@@ -212,11 +253,16 @@ public class GpsLoggingService extends Service {
      
      /**
       * notifies this manager of a location update and which source it is from
-      * @param accuracy
+      * @param source
       * @param location
       */
      private void onLocationUpdate(int source, Location location){
-    	 Log.d("GPS", "Enter Location Update");
+    	 Log.d("GPS", "Enter Location Update " + requests.size());
+		 lastLocation = location;
+		 if(singleSources.size() > 0){
+			processMessengers(location, source);
+		 }
+		 /**
     	 if(isRecording && location != null){
              if (source == SOURCE_FINE_GPS && location.hasAccuracy() && location.getAccuracy() <= minAccuracyMeters) {                	
 //                 GregorianCalendar greg = new GregorianCalendar();
@@ -248,7 +294,36 @@ public class GpsLoggingService extends Service {
     	 if(isPassive){
      		sendPassive(location, source);
      	}
+		  **/
      }
+
+	private void processMessengers(Location location, int source){
+		Log.d("GPS", "processMessengers");
+		for(Messenger request : singleSources.values()){
+			sendSingle(request, location, source);
+			/**
+			Log.d("GPS", "Message " + request.getData().getInt(KEY_ACTION, 0));
+			switch(request.getData().getInt(KEY_ACTION, 0)){
+				case LOG_POINT:
+					break;
+				case LOG_LINE:
+					break;
+				case LOG_AREA:
+					break;
+				case GET_POINT:
+					sendSingle(request.replyTo, location, source);
+					completed.add(request);
+					break;
+				case PASSIVE_START:
+
+					break;
+				default:
+					break;
+			}**/
+		}
+		//for(Message request: completed) requests.remove(request);
+		singleSources.clear();
+	}
      
      private void tryStopRequestingUpdates(){
     	 Log.d("gps","enter tryStopRequestingUpdates");
@@ -276,7 +351,7 @@ public class GpsLoggingService extends Service {
     	 Log.d("gps", "is gps enabled: " + Boolean.toString(locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)));
     	 Log.d("gps", "is network enabled: " + Boolean.toString(locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)));
     	 isReqestingUpdates = true;
-    	 timeOutHandler.postDelayed(timeOutRunnable, 1000); //Give a second to fire things up
+    	 //timeOutHandler.postDelayed(timeOutRunnable, 1000); //Give a second to fire things up
      }
      
      Handler timeOutHandler = new Handler();
@@ -298,6 +373,7 @@ public class GpsLoggingService extends Service {
 	public class GpsServiceMessageHandler extends Handler{
 		@Override
 		public void handleMessage(Message msg) {
+			Log.d("GPS", "HandleMessage " + msg.what);
 			try{
 				switch(msg.what){
 					case LOG_STOP:
@@ -310,7 +386,8 @@ public class GpsLoggingService extends Service {
 					case LOG_AREA:
 						break;
 					case GET_POINT:
-						onGetPoint(msg);
+						//onGetPoint(msg);
+						registerMessenger(msg);
 						break;
 					case PASSIVE_START:
 						onPassiveStart(msg);
@@ -319,7 +396,8 @@ public class GpsLoggingService extends Service {
 						onPassiveStop();
 						break;
 					case CANCEL:
-						onCancel();
+						//onCancel();
+						onCancel(msg);
 						break;
 					default:
 						break;
@@ -338,6 +416,25 @@ public class GpsLoggingService extends Service {
 			bundle.putParcelableArray(Location.class.getName(), locs);
 		}
 		return bundle;
+	}
+
+	public static Message messageCancel(String id, int originalRequestType){
+		Bundle bundle = new Bundle();
+		bundle.putString(KEY_SOURCE, id);
+		bundle.putInt(KEY_ACTION, originalRequestType);
+		Message msg = Message.obtain(null, GpsLoggingService.CANCEL);
+		msg.setData(bundle);
+		return msg;
+	}
+
+	public static Message messageGetPoint(Messenger replyTo, String id){
+		Bundle bundle = new Bundle();
+		bundle.putString(KEY_SOURCE, id);
+		bundle.putInt(KEY_ACTION, GET_POINT);
+		Message msg = Message.obtain(null, GpsLoggingService.GET_POINT);
+		msg.replyTo = replyTo;
+		msg.setData(bundle);
+		return msg;
 	}
 	
 	public class GpsLocationListener implements LocationListener {
