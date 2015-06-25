@@ -462,7 +462,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 		@Override
 		public void onClick(View v) {
 			GroupObservation g = new GroupObservation();
-			g.setAllowableValues("ML,LT,CC,OJ,KL,DP");
+			g.setAllowableValues("Atty Bressler,Beth Reid,Brandy Kashuba,Carol Thompson,Christina Brodribb,Dave Reid,Dawn Hall,Francois Dion,Janet Bauman,Kaitlyn Scaber,Laura Roberts,Marianne Van Doorn,Mary Ann Lobb,Michelle Dias,Ruth Ibemesim,Scott Shantz,Wayne Bessie");
 			Bundle bundle = new Bundle();
 			bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
 			ObservationDialogFragment dialog = new ObservationDialogFragment();
@@ -482,7 +482,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 		@Override
 		public void onClick(View v) {
 			GroupObservation g = new GroupObservation();
-			g.setAllowableValues("ML,LT,CC,OJ,KL,DP");
+			g.setAllowableValues("Atty Bressler,Beth Reid,Brandy Kashuba,Carol Thompson,Christina Brodribb,Dave Reid,Dawn Hall,Francois Dion,Janet Bauman,Kaitlyn Scaber,Laura Roberts,Marianne Van Doorn,Mary Ann Lobb,Michelle Dias,Ruth Ibemesim,Scott Shantz,Wayne Bessie");
 			Bundle bundle = new Bundle();
 			bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
 			bundle.putBoolean(ObservationDialogFragment.ARG_MULTI_SELECT, true);
@@ -506,7 +506,7 @@ public class StationEditFragment extends Fragment implements ActionEvent.Listene
 		@Override
 		public void onClick(View v) {
 			GroupObservation g = new GroupObservation();
-			g.setAllowableValues("a1,b1,c1,c2,wetland 1, wetland 2");
+			g.setAllowableValues("a1,b1,b2,b3,b4,c1,d1,d2,d3,e1,e2,e3,f1,f2,f3,g1,h1,i1,i2,j1,j2,k1,k2,k3,l1,NBL,NBU,NCB,NCC,NCL,NDI,NEC,NOM,NRC,NRD,NRM,NRO,NRS,NRX,NSH,NWF,NWL,NWM,NWP,NWR,RDE,Regen,Riparian,RPJ,RSB,RSW");
 			Bundle bundle = new Bundle();
 			bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
 			ObservationDialogFragment dialog = new ObservationDialogFragment();

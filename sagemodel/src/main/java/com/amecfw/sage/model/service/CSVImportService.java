@@ -70,22 +70,22 @@ public class CSVImportService extends IntentService {
 			Log.d("CSV", "Completed Import");
 			sendNotification("Import Completed");
 		}catch(FileNotFoundException e){
-			Log.d("CSV", "Export failed");
+			Log.d("CSV", "Import failed");
 			sendNotification("Export Failed unable to locate import");
 			Log.d("CSV", e.getClass().getName());
 			Log.e("CSVExportService", e.getLocalizedMessage());
 		}catch (IOException e) {
-			Log.d("CSV", "Export failed");
+			Log.d("CSV", "Import failed");
 			sendNotification("Export Failed file access error");
 			Log.d("CSV", e.getClass().getName());
 			Log.e("CSVExportService", e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			Log.d("CSV", "Export failed");
+			Log.d("CSV", "Import failed");
 			sendNotification("Export Failed unrecognized data");
 			Log.d("CSV", e.getClass().getName());
 			Log.e("CSVExportService", e.getLocalizedMessage());
 		}catch (Exception e){
-			Log.d("CSV", "Export failed");
+			Log.d("CSV", "Import failed");
 			sendNotification("Export unknown issue");
 			Log.d("CSV", e.getClass().getName());
 			Log.e("CSVExportService", e.getLocalizedMessage());
@@ -150,6 +150,7 @@ public class CSVImportService extends IntentService {
 		int pgress = 0;
 		int i = 0;
 		sendProgress(pmax, pgress, String.format("Saving %s records", recordSet.clazz.getSimpleName()));
+		Log.d("CSV",  String.format("Saving %s records", recordSet.clazz.getSimpleName()));
 		HashMap<Property, CsvRecordSet> joins = getJoins(recordSet.dao.getProperties(), recordSet);
 		for(CsvRecord record: recordSet.records){
 			T entity = convert(record, recordSet.clazz, recordSet.dao.getProperties());

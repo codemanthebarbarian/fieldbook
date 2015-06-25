@@ -99,7 +99,7 @@ public class PlotEditFragment extends StationEditFragmentBase<PlotEditFragment.V
         public void onClick(View v) {
             ApplicationUI.hideSoftKeyboard(getActivity());
             GroupObservation g = new GroupObservation();
-            g.setAllowableValues("a1,b1,c1,c2,wetland 1, wetland 2");
+            g.setAllowableValues("a1,b1,b2,b3,b4,c1,d1,d2,d3,e1,e2,e3,f1,f2,f3,g1,h1,i1,i2,j1,j2,k1,k2,k3,l1,NBL,NBU,NCB,NCC,NCL,NDI,NEC,NOM,NRC,NRD,NRM,NRO,NRS,NRX,NSH,NWF,NWL,NWM,NWP,NWR,RDE,Regen,Riparian,RPJ,RSB,RSW");
             Bundle bundle = new Bundle();
             bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
             ObservationDialogFragment dialog = new ObservationDialogFragment();
