@@ -127,6 +127,8 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
 
     public abstract void setViewModel(TViewModel viewModel);
 
+    public abstract String getClassName();
+
     /**
      * Saves mIsDirty, viewState, and ViewModel to the instance state.
      * Will also cancel any gps requests if initialized and waiting
@@ -292,12 +294,11 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
         }
 
         public void sendCoordinateRequest() {
-            Message msg = Message.obtain(null, GpsLoggingService.GET_POINT);
-            msg.replyTo = new Messenger(this);
+            Log.d("GPS","SendCoordinateRequest");
             try {
                 isWaitingForGpsResponse = true;
                 fragment.coordinateText.setText("Getting Location");
-                gpsMessenger.send(msg);
+                gpsMessenger.send(GpsLoggingService.messageGetPoint(new Messenger(this), fragment.getClassName()));
             } catch (RemoteException re) {
                 fragment.coordinateText.setText("GPS ERROR");
                 isWaitingForGpsResponse = false;
@@ -307,10 +308,10 @@ public abstract class StationEditFragmentBase<TViewModel extends com.amecfw.sage
 
         public void sendGpsCancel() {
             if (isWaitingForGpsResponse) {
-                Message msg = Message.obtain(null, GpsLoggingService.CANCEL);
+                Log.d("GPS", "SendGPSCancel");
                 try {
                     isWaitingForGpsResponse = false;
-                    gpsMessenger.send(msg);
+                    gpsMessenger.send(GpsLoggingService.messageCancel(fragment.getClassName(), GpsLoggingService.GET_POINT));
                 } catch (RemoteException re) {
                     fragment.coordinateText.setText("GPS ERROR");
                     isWaitingForGpsResponse = true;

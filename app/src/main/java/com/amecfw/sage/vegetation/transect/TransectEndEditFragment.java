@@ -36,6 +36,11 @@ public class TransectEndEditFragment extends StationEditFragmentBase<TransectEnd
     private EditText tranLength;
 
     @Override
+    public String getClassName() {
+        return this.getClass().getName();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         notify = false;
         View view = inflater.inflate(R.layout.veg_transect_end_edit, container, false);
