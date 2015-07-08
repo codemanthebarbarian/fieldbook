@@ -41,6 +41,11 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
     private EditText fieldCrewTextField;
 
     @Override
+    public String getClassName() {
+        return this.getClass().getName();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         notify = false;
         View view = inflater.inflate(R.layout.veg_transect_edit, container, false);

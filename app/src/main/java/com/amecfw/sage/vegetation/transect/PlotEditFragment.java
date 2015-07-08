@@ -39,6 +39,11 @@ public class PlotEditFragment extends StationEditFragmentBase<PlotEditFragment.V
     private EditText ecoSiteTextField;
 
     @Override
+    public String getClassName() {
+        return this.getClass().getName();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         notify = false;
         View view = inflater.inflate(R.layout.veg_trasect_plot_edit, container, false);
