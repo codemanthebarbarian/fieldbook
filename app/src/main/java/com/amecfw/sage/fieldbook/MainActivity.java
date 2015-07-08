@@ -64,6 +64,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(preferencesListener);
+		SageApplication.dispose();
 		super.onDestroy();
 	}
 

@@ -5,10 +5,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 //import android.app.Notification;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,6 +27,8 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.amecfw.sage.model.SageApplication;
 
 public class GpsLoggingService extends Service {
 	/** Constant Value: 0 */
@@ -57,13 +64,13 @@ public class GpsLoggingService extends Service {
 	
 	private LocationManager locManager;
 	private GpsLocationListener locListenerFine;
-	private GpsLocationListener locListenerCoarse;
+	//private GpsLocationListener locListenerCoarse;
 	private Messenger messenger = new Messenger(new GpsServiceMessageHandler());
 	
 	private int timeOutInSeconds = 120;
 	private int timeSinceUpdate = 0;
 	private long minTimeMillis = 3000;
-	private long minDistanceMeters = 5;
+	private long minDistanceMeters = 0;
 	private float minAccuracyMeters = 15;	
 	private Boolean showStatusToasts = true;
 	private List<Location> locations;
@@ -109,19 +116,28 @@ public class GpsLoggingService extends Service {
 
 	/** Called when the activity is first created. */	 
     private void startLoggerService() {
+		sendNotificationIndeterminate("Initializing GPS");
     	// ---use the LocationManager class to obtain GPS locations---
 		requests = new ArrayList<>();
 		singleSources = new LinkedHashMap<>();
     	locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     	locListenerFine = new GpsLocationListener(Criteria.ACCURACY_FINE, LocationManager.GPS_PROVIDER);
-    	locListenerCoarse = new GpsLocationListener(Criteria.ACCURACY_COARSE, LocationManager.NETWORK_PROVIDER);
+    	//locListenerCoarse = new GpsLocationListener(Criteria.ACCURACY_COARSE, LocationManager.NETWORK_PROVIDER);
 		registerLocationListeners();
     }
-    
+
+	public void stopLogging(){
+		shutdownLoggerService();
+	}
+
+	public void resumeLogging(){
+		registerLocationListeners();
+	}
+
     private void shutdownLoggerService() { 
     	if(isReqestingUpdates) {
 			locManager.removeUpdates(locListenerFine);
-			locManager.removeUpdates(locListenerCoarse);
+			//locManager.removeUpdates(locListenerCoarse);
 		}
 		requests.clear();
     } 
@@ -158,6 +174,7 @@ public class GpsLoggingService extends Service {
 
 	public void registerMessenger(Message msg){
 		Log.d("GPS", "registerMessenger");
+		updateStatus(0);
 		if(msg.replyTo != null) singleSources.put(msg.getData().getString(KEY_SOURCE), msg.replyTo);
 	}
 
@@ -259,6 +276,7 @@ public class GpsLoggingService extends Service {
      private void onLocationUpdate(int source, Location location){
     	 Log.d("GPS", "Enter Location Update " + requests.size());
 		 lastLocation = location;
+		 sendNotification(String.format("GPS Accuracy: %s", Float.toString(location.getAccuracy())));
 		 if(singleSources.size() > 0){
 			processMessengers(location, source);
 		 }
@@ -331,13 +349,13 @@ public class GpsLoggingService extends Service {
     		 Log.d("gps", "stopping updates");
     		 timeOutHandler.removeCallbacks(timeOutRunnable);
     		 locManager.removeUpdates(locListenerFine);
-    		 locManager.removeUpdates(locListenerCoarse);
+    		 //locManager.removeUpdates(locListenerCoarse);
     		 isReqestingUpdates = false;
     	 }
      }
 	
-     private void registerLocationListeners(){
-    	 Log.d("gps", "enter registerLocationListeners");
+     private void registerLocationListeners() {
+		 Log.d("gps", "enter registerLocationListeners");
     	 if(isReqestingUpdates) return;
 //    	 Criteria fine = new Criteria();
 //    	 fine.setAccuracy(Criteria.ACCURACY_FINE);
@@ -347,10 +365,11 @@ public class GpsLoggingService extends Service {
     	 Log.d("gps", "is gps enabled: " + Boolean.toString(locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)));
     	 Log.d("gps", "is network enabled: " + Boolean.toString(locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)));
     	 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis, minDistanceMeters, locListenerFine);
-    	 locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTimeMillis, minDistanceMeters, locListenerCoarse);
+    	 //locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTimeMillis, minDistanceMeters, locListenerCoarse);
     	 Log.d("gps", "is gps enabled: " + Boolean.toString(locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)));
     	 Log.d("gps", "is network enabled: " + Boolean.toString(locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)));
     	 isReqestingUpdates = true;
+		 sendNotification("GPS Enabled");
     	 //timeOutHandler.postDelayed(timeOutRunnable, 1000); //Give a second to fire things up
      }
      
@@ -436,8 +455,63 @@ public class GpsLoggingService extends Service {
 		msg.setData(bundle);
 		return msg;
 	}
+
+	GpsStatus gpsStatus;
+	public void updateStatus(int event){
+		int count = 0;
+		int used = 0;
+		gpsStatus = locManager.getGpsStatus(gpsStatus);
+		for(GpsSatellite sat : gpsStatus.getSatellites()){
+			count++;
+			if(sat.usedInFix()) used++;
+		}
+		sendNotification(String.format("number of satalites: %s/%s", Integer.toString(used), Integer.toString(count)));
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	// NOTIFICATIONS
+	private Notification.Builder nBuilder;
+	private NotificationManager nManager;
+	private final int notificationId = GpsLoggingService.class.getName().hashCode();
+
+	private void sendNotification(String message){
+		if(nBuilder == null) buildNotificationBldr();
+		nBuilder.setContentText(message);
+		nBuilder.setProgress(0, 0, false);//remove any progress
+		nManager.notify(notificationId, nBuilder.build());
+	}
+
+	private void sendProgress(int max, int progress){
+		if(nBuilder == null) buildNotificationBldr();
+		nBuilder.setProgress(max, progress, false);
+		nManager.notify(notificationId, nBuilder.build());
+	}
+
+	private void sendProgress(int max, int progress, String message){
+		if(nBuilder == null) buildNotificationBldr();
+		nBuilder.setContentText(message);
+		nBuilder.setProgress(max, progress, false);
+		nManager.notify(notificationId, nBuilder.build());
+	}
+
+	private void sendNotificationIndeterminate(String message){
+		if(nBuilder == null) buildNotificationBldr();
+		nBuilder.setContentText(message);
+		nBuilder.setProgress(0, 0, true);//remove any progress
+		nManager.notify(notificationId, nBuilder.build());
+	}
+
+	private void buildNotificationBldr(){
+		if(nManager == null) nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nBuilder = new Notification.Builder(this)
+				.setContentTitle("Sage Fieldbook")
+				.setSmallIcon(com.amecfw.sage.model.R.drawable.afw);
+		//Set a non intent (we don't want to have a specific return intent when the user clicks the notifiation
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0);
+		nBuilder.setContentIntent(resultPendingIntent);
+	}
 	
-	public class GpsLocationListener implements LocationListener {
+	public class GpsLocationListener implements LocationListener, GpsStatus.Listener {
 		
 		private int accuracy;
 		private Location previous;
@@ -477,7 +551,12 @@ public class GpsLoggingService extends Service {
             		Toast.LENGTH_SHORT).show();
         }
 
-        @Override
+		@Override
+		public void onGpsStatusChanged(int i) {
+			updateStatus(i);
+		}
+
+		@Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
         	Log.d("gps", "onStatusChanged - " + provider);
                 String showStatus = null;
