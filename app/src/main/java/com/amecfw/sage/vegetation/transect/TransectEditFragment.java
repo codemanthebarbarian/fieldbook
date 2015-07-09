@@ -113,7 +113,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
         public void onClick(View v) {
             ApplicationUI.hideSoftKeyboard(getActivity());
             GroupObservation g = new GroupObservation();
-            g.setAllowableValues("Atty Bressler,Beth Reid,Brandy Kashuba,Carol Thompson,Christina Brodribb,Dave Reid,Dawn Hall,Francois Dion,Janet Bauman,Kaitlyn Scaber,Laura Roberts,Marianne Van Doorn,Mary Ann Lobb,Michelle Dias,Ruth Ibemesim,Scott Shantz,Wayne Bessie");
+            g.setAllowableValues("Atty Bressler,Beth Reid,Brandy Kashuba,Carol Thompson,Christina Brodribb,Dave Reid,Dawn Hall,Francois Dion,Janet Bauman,Kaitlyn Scaber,Laura Roberts,Marianne Van Doorn,Mary Ann Lobb,Michael Kovacs,Michelle Dias,Ruth Ibemesim,Scott Shantz,Wayne Bessie");
             Bundle bundle = new Bundle();
             bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
             ObservationDialogFragment dialog = new ObservationDialogFragment();
@@ -134,7 +134,7 @@ public class TransectEditFragment extends StationEditFragmentBase<TransectEditFr
         public void onClick(View v) {
             ApplicationUI.hideSoftKeyboard(getActivity());
             GroupObservation g = new GroupObservation();
-            g.setAllowableValues("Atty Bressler,Beth Reid,Brandy Kashuba,Carol Thompson,Christina Brodribb,Dave Reid,Dawn Hall,Francois Dion,Janet Bauman,Kaitlyn Scaber,Laura Roberts,Marianne Van Doorn,Mary Ann Lobb,Michelle Dias,Ruth Ibemesim,Scott Shantz,Wayne Bessie");
+            g.setAllowableValues("Atty Bressler,Beth Reid,Brandy Kashuba,Carol Thompson,Christina Brodribb,Dave Reid,Dawn Hall,Francois Dion,Janet Bauman,Kaitlyn Scaber,Laura Roberts,Marianne Van Doorn,Mary Ann Lobb,Michael Kovacs,Michelle Dias,Ruth Ibemesim,Scott Shantz,Wayne Bessie");
             Bundle bundle = new Bundle();
             bundle.putParcelable(ObservationDialogFragment.ARG_GROUP_OBSERVATION, g);
             bundle.putBoolean(ObservationDialogFragment.ARG_MULTI_SELECT, true);
