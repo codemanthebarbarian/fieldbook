@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.amecfw.sage.model.Element;
+import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.util.Convert;
 import com.amecfw.sage.util.ListAdapter;
 
@@ -146,6 +147,9 @@ public class ElementsMultiSelectListAdapter extends ListAdapter<Element> impleme
 	private ElementFilter filter;
 	ArrayList<Element> original;
 
+	public static final int SEARCH_MODE_START = 0;
+	public static final int SEARCH_MODE_CONTAINS = 1;
+
 	private class ElementFilter extends Filter {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
@@ -200,9 +204,11 @@ public class ElementsMultiSelectListAdapter extends ListAdapter<Element> impleme
 		}
 
 		private Boolean matches(String code, CharSequence value) {
-			if (code.toLowerCase(Locale.getDefault()).contains(value.toString().toLowerCase(Locale.getDefault())))
+			if (SageApplication.getInstance().getElementsSearchMode() == SEARCH_MODE_CONTAINS &&
+					code.toLowerCase(Locale.getDefault()).contains(value.toString().toLowerCase(Locale.getDefault())))
 				return true;
-
+			if(code.toLowerCase(Locale.getDefault()).startsWith(value.toString().toLowerCase(Locale.getDefault())))
+				return true;
 			return false;
 		}
 
