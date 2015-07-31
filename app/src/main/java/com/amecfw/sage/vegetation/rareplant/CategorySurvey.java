@@ -331,6 +331,23 @@ public class CategorySurvey extends Activity {
 	
 	private void updateCategory(ArrayList<CategoryElementsListAdapter.ViewModel> viewModels){
 		proxy.updateCanopyElementViewModels(viewModels, currentCategory.getCategoryName());
+		updateAllCategories();
+	}
+
+	private void updateAllCategories(){
+		Fragment cFragment = getFragmentManager().findFragmentByTag(CategoryFragment.class.getName());
+		if (cFragment != null){
+			CategoryFragment fragment = (CategoryFragment) cFragment;
+			for( VegetationSurveyProxy p : proxy.getCanopies()){
+				CategoryFragment.ViewModel vm = new CategoryFragment.ViewModel();
+				vm.setCategoryName(p.getModel().getName());
+				vm.setElementCount(p.getStationElements().size());
+				Bundle args = new Bundle();
+				args.putInt(ActionEvent.ARG_COMMAND, CategoryFragment.COMMAND_UPDATE_CATEGORY);
+				args.putParcelable(CategoryFragment.ARG_CATEGORY_VIEW_MODEL, vm);
+				fragment.actionPerformed(ActionEvent.getActionDoCommand(args));
+			}
+		}
 	}
 	
 	/**
@@ -349,7 +366,7 @@ public class CategorySurvey extends Activity {
 			Bundle args = new Bundle();
 			args.putInt(ActionEvent.ARG_COMMAND, CategoryFragment.COMMAND_UPDATE_CATEGORY);
 			args.putParcelable(CategoryFragment.ARG_CATEGORY_VIEW_MODEL, currentCategory);
-			Fragment cFragment = (CategoryFragment)getFragmentManager().findFragmentByTag(CategoryFragment.class.getName());
+			Fragment cFragment = getFragmentManager().findFragmentByTag(CategoryFragment.class.getName());
 			((CategoryFragment)cFragment).actionPerformed(ActionEvent.getActionDoCommand(args));
 		}
 	}
