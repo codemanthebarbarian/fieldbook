@@ -161,7 +161,7 @@ public class TransectManagement extends StationManager<TransectEditFragment> {
         end.setId(0L);
         end.setStation(transect);
         end.setStationType(VegetationGlobals.SURVEY_TRANSECT_END);
-        end.setName(transect.getName());
+        end.setName(transect.getName() + " End");
         end.setProjectSite(projectSite);
         return end;
     }
