@@ -10,6 +10,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.amecfw.sage.model.Element;
+import com.amecfw.sage.model.SageApplication;
 import com.amecfw.sage.util.ListAdapter;
 
 import java.util.ArrayList;
@@ -157,9 +158,11 @@ public class ElementsSingleClickListAdapter extends ListAdapter<Element> impleme
         }
 
         private Boolean matches(String code, CharSequence value) {
-            if (code.toLowerCase(Locale.getDefault()).startsWith(value.toString().toLowerCase(Locale.getDefault())))
+            if (SageApplication.getInstance().getElementsSearchMode() == ElementsMultiSelectListAdapter.SEARCH_MODE_CONTAINS &&
+                    code.toLowerCase(Locale.getDefault()).contains(value.toString().toLowerCase(Locale.getDefault())))
                 return true;
-
+            if(code.toLowerCase(Locale.getDefault()).startsWith(value.toString().toLowerCase(Locale.getDefault())))
+                return true;
             return false;
         }
 

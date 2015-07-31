@@ -83,4 +83,16 @@
         <item>DISPLAY_SCIENTIFIC_COMMON</item>
         <item>DISPLAY_COMMON_SCIENTIFIC</item>
     </string-array>
+    <string name="preferencesApp_elementsSearchTitle">Plant Elements Search Mode</string>
+    <string name="preferencesApp_elementsSearchDialogTitle">Plant Elements Search Mode</string>
+    <string name="preferencesApp_elementsSearchKey">appPreferences_elementsSearch</string>
+    <string name="preferencesApp_elementsSearchDefault">START</string>
+    <string-array name="preferencesApp_elementsSearchEntries">
+        <item>Starting With</item>
+        <item>Containing</item>
+    </string-array>
+    <string-array name="preferencesApp_elementsSearchValues">
+        <item>START</item>
+        <item>CONTAINING</item>
+    </string-array>
 </resources>

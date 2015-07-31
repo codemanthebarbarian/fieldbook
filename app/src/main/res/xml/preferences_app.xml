@@ -14,4 +14,11 @@
         android:entries="@array/preferencesApp_elementModeEntries"
         android:entryValues="@array/preferencesApp_elementModeValues"
         android:defaultValue="@string/preferencesApp_elementModeDefault"/>
+    <ListPreference
+        android:key="@string/preferencesApp_elementsSearchKey"
+        android:title="@string/preferencesApp_elementsSearchTitle"
+        android:dialogTitle="@string/preferencesApp_elementsSearchDialogTitle"
+        android:entries="@array/preferencesApp_elementsSearchEntries"
+        android:entryValues="@array/preferencesApp_elementsSearchValues"
+        android:defaultValue="@string/preferencesApp_elementsSearchDefault"/>
 </PreferenceScreen>

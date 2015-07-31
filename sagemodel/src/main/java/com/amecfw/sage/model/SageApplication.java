@@ -87,6 +87,8 @@ public class SageApplication implements ApplicationCache, ApplicationGps {
 				else themeID = R.style.AppTheme_Light;
 			} else if (key.equals(context.getResources().getString(R.string.preferencesApp_elementModeKey))){
 				setElementsMode(sharedPreferences.getString(key, null));
+			} else if (key.equals(context.getResources().getString(R.string.preferencesApp_elementsSearchKey))){
+				setElementsSearchMode(sharedPreferences.getString(key, null));
 			}
 		}
 	};
@@ -123,7 +125,6 @@ public class SageApplication implements ApplicationCache, ApplicationGps {
 		else if(mode.equalsIgnoreCase("DISPLAY_SCODE_SCIENTIFIC")) elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCODE_SCIENTIFIC;
 		else elementsMode = ElementsMultiSelectListAdapter.DISPLAY_SCIENTIFIC_COMMON;
 	}
-
 	public int getElementsMode(){
 		if(elementsMode < 1){
 			String key = context.getResources().getString(R.string.preferencesApp_elementModeKey);
@@ -131,6 +132,16 @@ public class SageApplication implements ApplicationCache, ApplicationGps {
 		}
 		return elementsMode;
 	}
+
+	private int elementsSearchMode = ElementsMultiSelectListAdapter.SEARCH_MODE_START;
+
+	public void setElementsSearchMode(String mode){
+		if(mode == null) elementsSearchMode = ElementsMultiSelectListAdapter.SEARCH_MODE_START;
+		else if (mode.equalsIgnoreCase("CONTAINING")) elementsSearchMode = ElementsMultiSelectListAdapter.SEARCH_MODE_CONTAINS;
+		else elementsSearchMode = ElementsMultiSelectListAdapter.SEARCH_MODE_START;
+	}
+	public void setElementsSearchMode(int mode) { if(mode == 0 || mode == 1) elementsSearchMode = mode ; }
+	public int getElementsSearchMode(){ return elementsSearchMode; }
 
 	// END Preferences
 	////////////////////////////////////////////////////////////////////////////////////////////////
