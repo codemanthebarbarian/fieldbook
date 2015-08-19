@@ -1,5 +1,12 @@
 package com.amecfw.sage.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +18,7 @@ import com.amecfw.sage.model.service.CSVImportService;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -47,6 +55,9 @@ public class ManageDatabase extends ListActivity {
 			case 3:
 				exportData();
 				break;
+			case 4:
+				copyDatabase();
+				break;
 			}
 		}
 	}
@@ -75,6 +86,25 @@ public class ManageDatabase extends ListActivity {
 			items.add(option);
 		}
 		return items;
+	}
+
+	private void copyDatabase(){
+		try{
+			SageApplication app = SageApplication.getInstance();
+			String dbFilePath = app.getDatabase().getPath();
+			String outPath = app.getExternalStoragePublicDirectory() + "/" + getApplicationContext().getString(R.string.dbName) + ".sqlite";
+			Log.d("Sage", dbFilePath);
+			Log.d("Sage", outPath);
+			File current = new File(dbFilePath);
+			File backup = new File(outPath);
+			FileChannel src = new FileInputStream(current).getChannel();
+			FileChannel dest = new FileOutputStream(backup).getChannel();
+			dest.transferFrom(src, 0, src.size());
+			src.close();
+			dest.close();
+		}catch (IOException ioe){
+			Log.e("Sage","Error getting db");
+		}
 	}
 	
 	

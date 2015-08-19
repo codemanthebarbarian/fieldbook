@@ -40,6 +40,7 @@
         <item>Projects</item>
         <item>Import Data</item>
         <item>Export Data</item>
+        <item>Copy Database</item>
     </string-array>
     
     <integer-array name="databaseManagement_optionCodes">
@@ -47,6 +48,7 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </integer-array>
     
 </resources>
